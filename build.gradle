@@ -1,0 +1,152 @@
+plugins {
+    id "java"
+    id "java-library"
+    id "maven-publish"
+    id "signing"
+}
+
+group = "org.embulk"
+version = "0.1.0-SNAPSHOT"
+description = "Embulk JSON processor for Embulk plugins"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    compileClasspath.resolutionStrategy.activateDependencyLocking()
+    runtimeClasspath.resolutionStrategy.activateDependencyLocking()
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compileOnly "org.embulk:embulk-api:0.10.6"
+    api "com.fasterxml.jackson.core:jackson-core:2.6.7"
+    api "org.msgpack:msgpack-core:0.8.11"
+
+    testImplementation "org.embulk:embulk-api:0.10.6"
+    testImplementation "junit:junit:4.13"
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.encoding = "UTF-8"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    title = "${project.name} v${project.version}"
+
+    options {
+        locale = "en_US"
+        encoding = "UTF-8"
+        links "https://docs.oracle.com/javase/8/docs/api/"
+    }
+}
+
+test {
+    testLogging {
+        outputs.upToDateWhen { false }
+        showStandardStreams = true
+    }
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        // Not to skip up-to-date checkstyles.
+        outputs.upToDateWhen { false }
+    }
+}
+
+jar {
+    from rootProject.file("LICENSE")
+}
+
+sourcesJar {
+    from rootProject.file("LICENSE")
+}
+
+javadocJar {
+    from rootProject.file("LICENSE")
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = "${project.group}"
+            artifactId = "${project.name}"
+
+            from components.java
+            // javadocJar and sourcesJar are added by java.withJavadocJar() and java.withSourcesJar() above.
+            // See: https://docs.gradle.org/current/javadoc/org/gradle/api/plugins/JavaPluginExtension.html
+
+            pom {  // https://central.sonatype.org/pages/requirements.html
+                packaging "jar"
+
+                name = "${project.name}"
+                description = "${project.description}"
+                url = "https://www.embulk.org/"
+
+                licenses {
+                    license {
+                        // http://central.sonatype.org/pages/requirements.html#license-information
+                        name = "The Apache License, Version 2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = "Sadayuki Furuhashi"
+                        email = "frsyuki@gmail.com"
+                    }
+                    developer {
+                        name = "Muga Nishizawa"
+                        email = "muga.nishizawa@gmail.com"
+                    }
+                    developer {
+                        name = "Dai MIKURUBE"
+                        email = "dmikurube@treasure-data.com"
+                    }
+                    developer {
+                        name = "Shinichi Ishimura"
+                        email = "shiketaudonko41@gmail.com"
+                    }
+                }
+
+                scm {
+                    connection = "scm:git:git://github.com/embulk/embulk-util-config.git"
+                    developerConnection = "scm:git:git@github.com:embulk/embulk-util-config.git"
+                    url = "https://github.com/embulk/embulk-util-config"
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {  // publishMavenPublicationToMavenCentralRepository
+            name = "mavenCentral"
+            if (project.version.endsWith("-SNAPSHOT")) {
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            }
+
+            credentials {
+                username = project.hasProperty("ossrhUsername") ? ossrhUsername : ""
+                password = project.hasProperty("ossrhPassword") ? ossrhPassword : ""
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.maven
+}
