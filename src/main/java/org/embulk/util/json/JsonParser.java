@@ -1,4 +1,4 @@
-package org.embulk.spi.json;
+package org.embulk.util.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser.Feature;

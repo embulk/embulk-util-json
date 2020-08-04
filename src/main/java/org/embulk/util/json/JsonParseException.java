@@ -1,4 +1,4 @@
-package org.embulk.spi.json;
+package org.embulk.util.json;
 
 import org.embulk.spi.DataException;
 
