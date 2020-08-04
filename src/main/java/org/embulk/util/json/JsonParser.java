@@ -17,7 +17,6 @@
 package org.embulk.util.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.filter.FilteringParserDelegate;
 import com.fasterxml.jackson.core.filter.JsonPointerBasedFilter;
@@ -33,33 +32,31 @@ import org.msgpack.value.Value;
 import org.msgpack.value.ValueFactory;
 
 public class JsonParser {
+    public JsonParser() {
+        this.factory = new JsonFactory();
+        factory.enable(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
+        factory.enable(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS);
+    }
+
     public interface Stream extends Closeable {
         Value next() throws IOException;
 
         void close() throws IOException;
     }
 
-    private final JsonFactory factory;
-
-    public JsonParser() {
-        this.factory = new JsonFactory();
-        factory.enable(Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
-        factory.enable(Feature.ALLOW_NON_NUMERIC_NUMBERS);
-    }
-
-    public Stream open(InputStream in) throws IOException {
+    public Stream open(final InputStream in) throws IOException {
         return openWithOffsetInJsonPointer(in, null);
     }
 
-    public Stream openWithOffsetInJsonPointer(InputStream in, String offsetInJsonPointer) throws IOException {
+    public Stream openWithOffsetInJsonPointer(final InputStream in, final String offsetInJsonPointer) throws IOException {
         return new StreamParseContext(factory, in, offsetInJsonPointer);
     }
 
-    public Value parse(String json) {
+    public Value parse(final String json) {
         return parseWithOffsetInJsonPointer(json, null);
     }
 
-    public Value parseWithOffsetInJsonPointer(String json, String offsetInJsonPointer) {
+    public Value parseWithOffsetInJsonPointer(final String json, final String offsetInJsonPointer) {
         return new SingleParseContext(factory, json, offsetInJsonPointer).parse();
     }
 
@@ -248,4 +245,6 @@ public class JsonParser {
             }
         }
     }
+
+    private final JsonFactory factory;
 }

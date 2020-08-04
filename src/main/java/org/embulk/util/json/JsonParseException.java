@@ -19,11 +19,11 @@ package org.embulk.util.json;
 import org.embulk.spi.DataException;
 
 public class JsonParseException extends DataException {
-    public JsonParseException(String message) {
+    public JsonParseException(final String message) {
         super(message);
     }
 
-    public JsonParseException(String message, Throwable cause) {
+    public JsonParseException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }
