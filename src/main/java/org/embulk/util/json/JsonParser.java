@@ -31,31 +31,74 @@ import java.util.Optional;
 import org.msgpack.value.Value;
 import org.msgpack.value.ValueFactory;
 
+/**
+ * Parses a stringified JSON to MessagePack {@link org.msgpack.value.Value}.
+ */
 public class JsonParser {
+    /**
+     * Creates a {@link JsonParser} instance.
+     */
     public JsonParser() {
         this.factory = new JsonFactory();
         factory.enable(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
         factory.enable(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS);
     }
 
+    /**
+     * A parsed stream of MessagePack {@link org.msgpack.value.Value}s.
+     */
     public interface Stream extends Closeable {
+        /**
+         * Gets the next MessagePack {@link org.msgpack.value.Value}.
+         *
+         * @return parsed {@link org.msgpack.value.Value}
+         */
         Value next() throws IOException;
 
+        /**
+         * Closes the stream.
+         */
         void close() throws IOException;
     }
 
+    /**
+     * Parses the stringified JSON {@link java.io.InputStream} to {@link Stream}.
+     *
+     * @param in  stringified JSON {@link java.io.InputStream} to parse
+     * @return a stream of parsed {@link org.msgpack.value.Value}
+     */
     public Stream open(final InputStream in) throws IOException {
         return openWithOffsetInJsonPointer(in, null);
     }
 
+    /**
+     * Parses the stringified JSON {@link java.io.InputStream} with the specified offset to {@link Stream}.
+     *
+     * @param in  stringified JSON {@link java.io.InputStream} to parse
+     * @param offsetInJsonPointer  offset in JSON Pointer to parse
+     * @return a stream of parsed {@link org.msgpack.value.Value}
+     */
     public Stream openWithOffsetInJsonPointer(final InputStream in, final String offsetInJsonPointer) throws IOException {
         return new StreamParseContext(factory, in, offsetInJsonPointer);
     }
 
+    /**
+     * Parses the stringified JSON {@link java.lang.String} to {@link org.msgpack.value.Value}.
+     *
+     * @param json  stringified JSON to parse
+     * @return parsed {@link org.msgpack.value.Value}
+     */
     public Value parse(final String json) {
         return parseWithOffsetInJsonPointer(json, null);
     }
 
+    /**
+     * Parses the stringified JSON {@link java.lang.String} with the specified offset to {@link org.msgpack.value.Value}.
+     *
+     * @param json  stringified JSON to parse
+     * @param offsetInJsonPointer  offset in JSON Pointer to parse
+     * @return parsed {@link org.msgpack.value.Value}
+     */
     public Value parseWithOffsetInJsonPointer(final String json, final String offsetInJsonPointer) {
         return new SingleParseContext(factory, json, offsetInJsonPointer).parse();
     }
