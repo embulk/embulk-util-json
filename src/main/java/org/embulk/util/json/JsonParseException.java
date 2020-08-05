@@ -18,12 +18,26 @@ package org.embulk.util.json;
 
 import org.embulk.spi.DataException;
 
+/**
+ * Represents an Exception in parsing a stringified JSON.
+ */
 public class JsonParseException extends DataException {
-    public JsonParseException(String message) {
+    /**
+     * Constructs a new {@link JsonParseException} with the specified detail message.
+     *
+     * @param message  the detail message
+     */
+    public JsonParseException(final String message) {
         super(message);
     }
 
-    public JsonParseException(String message, Throwable cause) {
+    /**
+     * Constructs a new {@link JsonParseException} with the specified detail message and cause.
+     *
+     * @param message  the detail message
+     * @param cause  the cause
+     */
+    public JsonParseException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }
