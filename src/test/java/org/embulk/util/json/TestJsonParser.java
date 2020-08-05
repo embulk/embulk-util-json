@@ -1,4 +1,4 @@
-package org.embulk.spi.json;
+package org.embulk.util.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
