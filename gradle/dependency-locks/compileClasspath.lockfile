@@ -2,5 +2,6 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 com.fasterxml.jackson.core:jackson-core:2.6.7
-org.embulk:embulk-api:0.10.6
+org.embulk:embulk-api:0.10.31
 org.msgpack:msgpack-core:0.8.11
+org.slf4j:slf4j-api:1.7.30
