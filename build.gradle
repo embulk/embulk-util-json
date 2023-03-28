@@ -59,21 +59,18 @@ javadoc {
 jar {
     metaInf {
         from rootProject.file("LICENSE")
-        from rootProject.file("NOTICE")
     }
 }
 
 sourcesJar {
     metaInf {
         from rootProject.file("LICENSE")
-        from rootProject.file("NOTICE")
     }
 }
 
 javadocJar {
     metaInf {
         from rootProject.file("LICENSE")
-        from rootProject.file("NOTICE")
     }
 }
 
