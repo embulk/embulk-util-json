@@ -1,5 +1,5 @@
-embulk-util-json
-================
+Embulk Utilities for JSON
+==========================
 
 For Embulk plugin developers
 -----------------------------

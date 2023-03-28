@@ -10,9 +10,6 @@ group = "org.embulk"
 version = "0.2.0-SNAPSHOT"
 description = "Embulk JSON processor for Embulk plugins"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 configurations {
     compileClasspath.resolutionStrategy.activateDependencyLocking()
     runtimeClasspath.resolutionStrategy.activateDependencyLocking()
@@ -20,6 +17,20 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.encoding = "UTF-8"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -31,16 +42,6 @@ dependencies {
     testImplementation "org.embulk:embulk-api:0.10.31"
     testImplementation "org.msgpack:msgpack-core:0.8.11"
     testImplementation "junit:junit:4.13"
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    options.encoding = "UTF-8"
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 javadoc {
@@ -55,47 +56,35 @@ javadoc {
     }
 }
 
-test {
-    testLogging {
-        outputs.upToDateWhen { false }
-        showStandardStreams = true
-    }
-}
-
-tasks.withType(Checkstyle) {
-    reports {
-        // Not to skip up-to-date checkstyles.
-        outputs.upToDateWhen { false }
-    }
-}
-
-checkstyle {
-    toolVersion "8.7"
-    configFile = file("${projectDir}/config/checkstyle/checkstyle.xml")
-    configProperties = [
-        "checkstyle.config.path": file("${projectDir}/config/checkstyle")
-    ]
-    ignoreFailures = false
-    maxWarnings = 0  // https://github.com/gradle/gradle/issues/881
-}
-
 jar {
-    from rootProject.file("LICENSE")
+    metaInf {
+        from rootProject.file("LICENSE")
+    }
 }
 
 sourcesJar {
-    from rootProject.file("LICENSE")
+    metaInf {
+        from rootProject.file("LICENSE")
+    }
 }
 
 javadocJar {
-    from rootProject.file("LICENSE")
+    metaInf {
+        from rootProject.file("LICENSE")
+    }
+}
+
+// It should not publish a `.module` file in Maven Central.
+// https://docs.gradle.org/current/userguide/publishing_gradle_module_metadata.html#sub:disabling-gmm-publication
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = "${project.group}"
-            artifactId = "${project.name}"
+            groupId = project.group
+            artifactId = project.name
 
             from components.java
             // javadocJar and sourcesJar are added by java.withJavadocJar() and java.withSourcesJar() above.
@@ -104,8 +93,8 @@ publishing {
             pom {  // https://central.sonatype.org/pages/requirements.html
                 packaging "jar"
 
-                name = "${project.name}"
-                description = "${project.description}"
+                name = project.name
+                description = project.description
                 url = "https://www.embulk.org/"
 
                 licenses {
@@ -136,9 +125,9 @@ publishing {
                 }
 
                 scm {
-                    connection = "scm:git:git://github.com/embulk/embulk-util-config.git"
-                    developerConnection = "scm:git:git@github.com:embulk/embulk-util-config.git"
-                    url = "https://github.com/embulk/embulk-util-config"
+                    connection = "scm:git:git://github.com/embulk/embulk-util-json.git"
+                    developerConnection = "scm:git:git@github.com:embulk/embulk-util-json.git"
+                    url = "https://github.com/embulk/embulk-util-json"
                 }
             }
         }
@@ -162,5 +151,38 @@ publishing {
 }
 
 signing {
+    if (project.hasProperty("signingKey") && project.hasProperty("signingPassword")) {
+        logger.lifecycle("Signing with an in-memory key.")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
     sign publishing.publications.maven
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showCauses = true
+        showExceptions = true
+        showStackTraces = true
+        showStandardStreams = true
+        outputs.upToDateWhen { false }
+    }
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        // Not to skip up-to-date checkstyles.
+        outputs.upToDateWhen { false }
+    }
+}
+
+checkstyle {
+    toolVersion "8.7"
+    configFile = file("${projectDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+        "checkstyle.config.path": file("${projectDir}/config/checkstyle")
+    ]
+    ignoreFailures = false
+    maxWarnings = 0  // https://github.com/gradle/gradle/issues/881
 }
