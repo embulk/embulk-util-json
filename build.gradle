@@ -1,5 +1,6 @@
 plugins {
     id "java"
+    id "java-library"
     id "maven-publish"
     id "signing"
     id "checkstyle"
@@ -36,7 +37,8 @@ dependencies {
     compileOnly "org.embulk:embulk-spi:0.10.44"
     compileOnly "org.msgpack:msgpack-core:0.8.24"
 
-    implementation "com.fasterxml.jackson.core:jackson-core:2.6.7"
+    // Dependencies should be "api" so that their scope would be "compile" in "pom.xml".
+    api "com.fasterxml.jackson.core:jackson-core:2.6.7"
 
     testImplementation "org.embulk:embulk-spi:0.10.44"
     testImplementation "org.msgpack:msgpack-core:0.8.24"
@@ -51,6 +53,7 @@ javadoc {
         encoding = "UTF-8"
         overview = "src/main/html/overview.html"
         links "https://docs.oracle.com/javase/8/docs/api/"
+        links "https://dev.embulk.org/embulk-spi/0.10.44/javadoc/"
         links "https://javadoc.io/doc/org.msgpack/msgpack-core/0.8.24/"
     }
 }
@@ -101,6 +104,7 @@ publishing {
                         // http://central.sonatype.org/pages/requirements.html#license-information
                         name = "The Apache License, Version 2.0"
                         url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution = "repo"
                     }
                 }
 
