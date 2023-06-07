@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "org.embulk"
-version = "0.2.2-SNAPSHOT"
+version = "0.2.2"
 description = "Embulk JSON processor for Embulk plugins"
 
 configurations {
