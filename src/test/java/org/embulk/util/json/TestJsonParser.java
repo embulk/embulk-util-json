@@ -16,10 +16,11 @@
 
 package org.embulk.util.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -27,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.msgpack.value.Value;
 import org.msgpack.value.ValueFactory;
 
@@ -41,10 +42,11 @@ public class TestJsonParser {
         assertEquals("foobar", msgpackValue.asStringValue().toString());
     }
 
-    @Test(expected = JsonParseException.class)
     public void testStringUnquoted() throws Exception {
         final JsonParser parser = new JsonParser();
-        parser.parse("foobar");
+        assertThrows(JsonParseException.class, () -> {
+            parser.parse("foobar");
+        });
     }
 
     @Test
