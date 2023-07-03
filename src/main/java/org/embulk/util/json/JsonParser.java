@@ -113,7 +113,12 @@ public class JsonParser {
 
     private static com.fasterxml.jackson.core.JsonParser wrapWithPointerFilter(
             final com.fasterxml.jackson.core.JsonParser baseParser, final String offsetInJsonPointer) {
-        return new FilteringParserDelegate(baseParser, new JsonPointerBasedFilter(offsetInJsonPointer), false, false);
+        return new FilteringParserDelegate(
+                baseParser,
+                new JsonPointerBasedFilter(offsetInJsonPointer),
+                false,
+                true  // Allow multiple matches
+                );
     }
 
     private static class StreamParseContext extends AbstractParseContext implements Stream {
