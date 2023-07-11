@@ -8,6 +8,8 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     strategy:
       fail-fast: false
+      matrix:
+        jacksonVersion: [ "2.6.7", "2.7.9", "2.8.11", "2.9.10", "2.10.5", "2.11.4", "2.12.7", "2.13.5", "2.14.3", "2.15.2" ]
     steps:
     - uses: actions/checkout@v3
     - name: Set up OpenJDK 8
@@ -16,5 +18,5 @@ jobs:
         java-version: 8
         distribution: "temurin"
         cache: "gradle"
-    - name: Check
-      run: ./gradlew --stacktrace check
+    - name: Check with Jackson ${{ matrix.jacksonVersion }}
+      run: ./gradlew --stacktrace -PjacksonVersionForJacksonTest=${{ matrix.jacksonVersion }} check
