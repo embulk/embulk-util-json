@@ -2,6 +2,7 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 com.fasterxml.jackson.core:jackson-core:2.6.7=compileClasspath,runtimeClasspath
+com.fasterxml.jackson:jackson-bom:2.6.7=compileClasspath,runtimeClasspath
 org.embulk:embulk-spi:0.11=compileClasspath
 org.msgpack:msgpack-core:0.8.24=compileClasspath
 org.slf4j:slf4j-api:2.0.7=compileClasspath

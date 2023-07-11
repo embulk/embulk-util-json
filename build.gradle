@@ -38,7 +38,8 @@ dependencies {
     compileOnly "org.msgpack:msgpack-core:0.8.24"
 
     // Dependencies should be "api" so that their scope would be "compile" in "pom.xml".
-    api "com.fasterxml.jackson.core:jackson-core:2.6.7"
+    api platform("com.fasterxml.jackson:jackson-bom:2.6.7")
+    api "com.fasterxml.jackson.core:jackson-core"
 
     testImplementation "org.embulk:embulk-spi:0.11"
     testImplementation "org.msgpack:msgpack-core:0.8.24"
@@ -77,6 +78,19 @@ sourcesJar {
 javadocJar {
     metaInf {
         from rootProject.file("LICENSE")
+    }
+}
+
+// A safer and strict alternative to: "dependencies" (and "dependencies --write-locks")
+//
+// This task fails explicitly when the specified dependency is not available.
+// In contrast, "dependencies (--write-locks)" does not fail even when a part the dependencies are unavailable.
+//
+// https://docs.gradle.org/7.6.1/userguide/dependency_locking.html#generating_and_updating_dependency_locks
+task checkDependencies {
+    notCompatibleWithConfigurationCache("The task \"checkDependencies\" filters configurations at execution time.")
+    doLast {
+        configurations.findAll { it.canBeResolved }.each { it.resolve() }
     }
 }
 
