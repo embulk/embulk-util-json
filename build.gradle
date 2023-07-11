@@ -59,6 +59,7 @@ javadoc {
         overview = "src/main/html/overview.html"
         links "https://docs.oracle.com/javase/8/docs/api/"
         links "https://dev.embulk.org/embulk-spi/0.11/javadoc/"
+        links "https://www.javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/2.6.7/"
         links "https://javadoc.io/doc/org.msgpack/msgpack-core/0.8.24/"
     }
 }
