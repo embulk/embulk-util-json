@@ -71,6 +71,40 @@ public class TestJacksonJsonPointer {
     }
 
     @Test
+    public void testRootDuplicated() throws IOException {
+        final JsonPointer root = JsonPointer.compile("//");
+        assertEquals("//", root.toString());
+        assertEquals("", root.getMatchingProperty());
+        assertTrue(root.getMatchingIndex() < 0);
+        assertNotEquals(JsonPointer.compile(""), root);
+        assertNotEquals(JsonPointer.compile("/"), root);
+        assertEquals(JsonPointer.compile("//"), root);
+        assertNotEquals(JsonPointer.compile("/foo"), root);
+
+        final JsonPointer tail1 = root.tail();
+        assertEquals("/", tail1.toString());
+        assertEquals("", tail1.getMatchingProperty());
+        assertTrue(tail1.getMatchingIndex() < 0);
+        assertNotEquals(JsonPointer.compile(""), tail1);
+        assertEquals(JsonPointer.compile("/"), tail1);
+        assertNotEquals(JsonPointer.compile("/foo"), tail1);
+
+        final JsonPointer tail2 = tail1.tail();
+        assertEquals("", tail2.toString());
+        if (isBefore2_14_0()) {
+            assertEquals("", tail2.getMatchingProperty());
+        } else {
+            assertEquals(null, tail2.getMatchingProperty());
+        }
+        assertTrue(tail2.getMatchingIndex() < 0);
+        assertEquals(JsonPointer.compile(""), tail2);
+        assertNotEquals(JsonPointer.compile("/"), tail2);
+        assertNotEquals(JsonPointer.compile("/foo"), tail2);
+
+        assertNull(tail2.tail());
+    }
+
+    @Test
     public void testSingleProperty() throws IOException {
         final JsonPointer root = JsonPointer.compile("/foo");
         assertEquals("/foo", root.toString());
