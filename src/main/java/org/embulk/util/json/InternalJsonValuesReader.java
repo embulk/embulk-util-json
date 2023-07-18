@@ -145,7 +145,10 @@ class InternalJsonValuesReader {
             this.parsingStack.push(new ParsingContext(false));
 
             final List<Integer> captures = this.pointerStack.getFirst().captures();
-            if (!captures.isEmpty()) {
+            // When |captures| is not empty for the JSON array, the array must be built as a JsonArray instance eventually.
+            //
+            // Whenever |builderStack| is not empty, there must be something to build for the parent builder.
+            if ((!captures.isEmpty()) || (!this.builderStack.isEmpty())) {
                 this.builderStack.push(new ArrayBuilder());
             }
         } else if (token == JsonToken.END_ARRAY) {
@@ -156,7 +159,10 @@ class InternalJsonValuesReader {
             this.parsingStack.push(new ParsingContext(true));
 
             final List<Integer> captures = this.pointerStack.getFirst().captures();
-            if (!captures.isEmpty()) {
+            // When |captures| is not empty for the JSON object, the object must be built as a JsonObject instance eventually.
+            //
+            // Whenever |builderStack| is not empty, there must be something to build for the parent builder.
+            if ((!captures.isEmpty()) || (!this.builderStack.isEmpty())) {
                 this.builderStack.push(new ObjectBuilder());
             }
         } else if (token == JsonToken.END_OBJECT) {

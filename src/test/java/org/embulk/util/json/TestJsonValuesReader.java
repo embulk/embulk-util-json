@@ -35,6 +35,222 @@ import org.junit.jupiter.api.Test;
 
 public class TestJsonValuesReader {
     @Test
+    public void testRead1() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/"),
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/bar"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(4, actual1.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                actual1[0]);
+        assertEquals(JsonNull.NULL, actual1[1]);
+        assertNotNull(actual1[1]);
+        assertEquals(JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE), actual1[2]);
+        assertEquals(JsonString.of("fuga"), actual1[3]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
+    public void testRead2() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/"),
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(3, actual1.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                actual1[0]);
+        assertEquals(JsonNull.NULL, actual1[1]);
+        assertNotNull(actual1[1]);
+        assertEquals(JsonString.of("fuga"), actual1[2]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
+    public void testRead3() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/"),
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/bar"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(4, actual1.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonLong.of(123L),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                actual1[0]);
+        assertEquals(JsonNull.NULL, actual1[1]);
+        assertNotNull(actual1[1]);
+        assertEquals(JsonLong.of(123L), actual1[2]);
+        assertEquals(JsonString.of("fuga"), actual1[3]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
+    public void testRead4() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/"),
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(3, actual1.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonLong.of(123L),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                actual1[0]);
+        assertEquals(JsonNull.NULL, actual1[1]);
+        assertNotNull(actual1[1]);
+        assertEquals(JsonString.of("fuga"), actual1[2]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
+    public void testRead5() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/bar"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(3, actual1.length);
+        assertEquals(JsonNull.NULL, actual1[0]);
+        assertNotNull(actual1[0]);
+        assertEquals(JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE), actual1[1]);
+        assertEquals(JsonString.of("fuga"), actual1[2]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
+    public void testRead6() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(2, actual1.length);
+        assertEquals(JsonNull.NULL, actual1[0]);
+        assertNotNull(actual1[0]);
+        assertEquals(JsonString.of("fuga"), actual1[1]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
+    public void testRead7() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/bar"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(3, actual1.length);
+        assertEquals(JsonNull.NULL, actual1[0]);
+        assertNotNull(actual1[0]);
+        assertEquals(JsonLong.of(123L), actual1[1]);
+        assertEquals(JsonString.of("fuga"), actual1[2]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
+    public void testRead8() throws Exception {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(
+                "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+
+        final JsonValuesReader reader1 = JsonValuesReader.of(
+                JsonPointer.compile("/baz"),
+                JsonPointer.compile("/qux/hoge"));
+
+        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+
+        assertEquals(2, actual1.length);
+        assertEquals(JsonNull.NULL, actual1[0]);
+        assertNotNull(actual1[0]);
+        assertEquals(JsonString.of("fuga"), actual1[1]);
+
+        // Confirming that JsonParser reaches at the end as expected.
+
+        assertNull(parser.nextToken());
+    }
+
+    @Test
     public void testReadArray() throws Exception {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
