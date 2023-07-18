@@ -431,10 +431,11 @@ class InternalJsonValuesReader {
     private final JsonPointerTree tree;
     private final int size;
 
-    private ArrayDeque<JsonPointerTree> pointerStack;
-    private ArrayDeque<ParsingContext> parsingStack;
-    private ArrayDeque<StructureBuilder> builderStack;
+    private final ArrayDeque<JsonPointerTree> pointerStack;
+    private final ArrayDeque<ParsingContext> parsingStack;
+    private final ArrayDeque<StructureBuilder> builderStack;
+
+    private final JsonValue[] values;
 
     private boolean hasFinished;
-    private JsonValue[] values;
 }
