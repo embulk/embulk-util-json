@@ -124,7 +124,7 @@ class JsonPointerTree extends AbstractMap<String, JsonPointerTree> {
                 return this;
             }
 
-            final List<String> splitPointers = split(Objects.requireNonNull(pointer));
+            final List<String> splitPointers = split(pointer);
 
             Builder node = this;
             for (final String pointerElement : splitPointers) {
