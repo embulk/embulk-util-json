@@ -33,20 +33,20 @@ import org.embulk.spi.json.JsonString;
 import org.embulk.spi.json.JsonValue;
 import org.junit.jupiter.api.Test;
 
-public class TestJsonValuesReader {
+public class TestCapturingJsonPointerList {
     @Test
     public void testRead1() throws Exception {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(4, actual1.length);
         assertEquals(
@@ -72,12 +72,12 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(3, actual1.length);
         assertEquals(
@@ -102,13 +102,13 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(4, actual1.length);
         assertEquals(
@@ -134,12 +134,12 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(3, actual1.length);
         assertEquals(
@@ -164,12 +164,12 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(3, actual1.length);
         assertEquals(JsonNull.NULL, actual1[0]);
@@ -188,11 +188,11 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(2, actual1.length);
         assertEquals(JsonNull.NULL, actual1[0]);
@@ -210,12 +210,12 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(3, actual1.length);
         assertEquals(JsonNull.NULL, actual1[0]);
@@ -234,11 +234,11 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(2, actual1.length);
         assertEquals(JsonNull.NULL, actual1[0]);
@@ -258,15 +258,15 @@ public class TestJsonValuesReader {
 
         assertEquals(JsonToken.START_ARRAY, parser.nextToken());
 
-        final JsonValuesReader reader = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/none"));
 
-        final JsonValue[] actual1 = reader.readValuesCaptured(parser);
-        final JsonValue[] actual2 = reader.readValuesCaptured(parser);
-        final JsonValue[] actual3 = reader.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers.captureFromParser(parser);
+        final JsonValue[] actual2 = capturingPointers.captureFromParser(parser);
+        final JsonValue[] actual3 = capturingPointers.captureFromParser(parser);
 
         assertEquals(4, actual1.length);
         assertEquals(JsonLong.of(12), actual1[0]);
@@ -297,15 +297,15 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"bar\":true,\"foo\":12}{\"foo\":84,\"bar\":false}{\"foo\":123,\"bar\":false}");
 
-        final JsonValuesReader reader = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/none"));
 
-        final JsonValue[] actual1 = reader.readValuesCaptured(parser);
-        final JsonValue[] actual2 = reader.readValuesCaptured(parser);
-        final JsonValue[] actual3 = reader.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers.captureFromParser(parser);
+        final JsonValue[] actual2 = capturingPointers.captureFromParser(parser);
+        final JsonValue[] actual3 = capturingPointers.captureFromParser(parser);
 
         assertEquals(4, actual1.length);
         assertEquals(JsonLong.of(12), actual1[0]);
@@ -336,14 +336,14 @@ public class TestJsonValuesReader {
 
         assertEquals(JsonToken.START_ARRAY, parser.nextToken());
 
-        final JsonValuesReader reader = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"));
 
-        final JsonValue[] actual1 = reader.readValuesCaptured(parser);
-        final JsonValue[] actual2 = reader.readValuesCaptured(parser);
-        final JsonValue[] actual3 = reader.readValuesCaptured(parser);
-        final JsonValue[] actual4 = reader.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers.captureFromParser(parser);
+        final JsonValue[] actual2 = capturingPointers.captureFromParser(parser);
+        final JsonValue[] actual3 = capturingPointers.captureFromParser(parser);
+        final JsonValue[] actual4 = capturingPointers.captureFromParser(parser);
 
         assertEquals(2, actual1.length);
         assertNull(actual1[0]);
@@ -368,7 +368,7 @@ public class TestJsonValuesReader {
 
     @Test
     public void testReadMultiParsers() throws Exception {
-        final JsonValuesReader reader = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/bar"),
@@ -379,9 +379,9 @@ public class TestJsonValuesReader {
         final JsonParser parser2 = factory.createParser("{\"bar\":false,\"foo\":84}");
         final JsonParser parser3 = factory.createParser("{\"foo\":123,\"bar\":false}");
 
-        final JsonValue[] actual1 = reader.readValuesCaptured(parser1);
-        final JsonValue[] actual2 = reader.readValuesCaptured(parser2);
-        final JsonValue[] actual3 = reader.readValuesCaptured(parser3);
+        final JsonValue[] actual1 = capturingPointers.captureFromParser(parser1);
+        final JsonValue[] actual2 = capturingPointers.captureFromParser(parser2);
+        final JsonValue[] actual3 = capturingPointers.captureFromParser(parser3);
 
         assertEquals(4, actual1.length);
         assertEquals(JsonLong.of(12), actual1[0]);
@@ -411,14 +411,14 @@ public class TestJsonValuesReader {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}{\"dummy\":{\"in\":98}}{\"unreach\":7}");
 
-        final JsonValuesReader reader1 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/qux"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/qux/hoge"));
 
-        final JsonValue[] actual1 = reader1.readValuesCaptured(parser);
+        final JsonValue[] actual1 = capturingPointers1.captureFromParser(parser);
 
         assertEquals(5, actual1.length);
         assertEquals(JsonObject.of("hoge", JsonString.of("fuga")), actual1[0]);
@@ -438,13 +438,13 @@ public class TestJsonValuesReader {
         assertEquals(JsonToken.FIELD_NAME, parser.nextToken());
         assertEquals("dummy", parser.getCurrentName());
 
-        // Confirming that reading can continue on the same JsonParser by another JsonValuesReader.
+        // Confirming that reading can continue on the same JsonParser by another CapturingJsonPointerList.
 
-        final JsonValuesReader reader2 = JsonValuesReader.of(
+        final CapturingJsonPointerList capturingPointers2 = CapturingJsonPointerList.of(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/in"));
 
-        final JsonValue[] actual2 = reader2.readValuesCaptured(parser);
+        final JsonValue[] actual2 = capturingPointers2.captureFromParser(parser);
 
         assertEquals(2, actual2.length);
         assertEquals(JsonObject.of("in", JsonLong.of(98L)), actual2[0]);
