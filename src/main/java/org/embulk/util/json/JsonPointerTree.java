@@ -145,7 +145,7 @@ class JsonPointerTree extends AbstractMap<String, JsonPointerTree> {
         }
 
         /**
-         * Split a JSON Pointer with unescaping.
+         * Split a JSON Pointer with unescaping {@code "~0"} to {@code "~"} and {@code "~1"} to {@code "/"}.
          *
          * <ul>
          * <li>{@code "/foo/bar/baz/qux"} : {@code ["foo", "bar", "baz", "qux"]}
@@ -154,6 +154,8 @@ class JsonPointerTree extends AbstractMap<String, JsonPointerTree> {
          * <li>{@code "/"} : {@code [""]}
          * <li>{@code ""} : {@code []}
          * </ul>
+         *
+         * @see <a href="https://datatracker.ietf.org/doc/html/rfc6901">RFC 6901: JavaScript Object Notation (JSON) Pointer</a>
          */
         static List<String> split(final JsonPointer pointer) {
             JsonPointer tail = Objects.requireNonNull(pointer);
