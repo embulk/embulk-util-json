@@ -93,7 +93,7 @@ public class CapturingJsonPointerList {
             final boolean withNumbersFallbackWithLiterals,
             final double defaultDouble,
             final long defaultLong) throws IOException {
-        final InternalJsonValuesReader innerReader = new InternalJsonValuesReader(
+        final TreeBasedCapturer capturer = new TreeBasedCapturer(
                 parser,
                 this.tree,
                 this.size,
@@ -101,11 +101,11 @@ public class CapturingJsonPointerList {
                 defaultDouble,
                 defaultLong);
 
-        while (innerReader.next()) {
+        while (capturer.next()) {
             ;
         }
 
-        return innerReader.peekValues();
+        return capturer.peekValues();
     }
 
     /**

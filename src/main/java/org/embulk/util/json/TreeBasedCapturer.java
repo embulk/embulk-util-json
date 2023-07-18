@@ -33,8 +33,11 @@ import org.embulk.spi.json.JsonObject;
 import org.embulk.spi.json.JsonString;
 import org.embulk.spi.json.JsonValue;
 
-class InternalJsonValuesReader {
-    InternalJsonValuesReader(
+/**
+ * A context-ful JSON value "capturer" based on {@link JsonPointerTree}.
+ */
+class TreeBasedCapturer {
+    TreeBasedCapturer(
             final JsonParser parser,
             final JsonPointerTree tree,
             final int size,
