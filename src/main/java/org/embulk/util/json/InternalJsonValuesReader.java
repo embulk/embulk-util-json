@@ -43,6 +43,7 @@ class InternalJsonValuesReader {
             final long defaultLong) {
         this.parser = parser;
         this.tree = tree;
+        this.hasRootToCapture = this.tree.captures().isEmpty();
 
         this.withNumbersFallbackWithLiterals = withNumbersFallbackWithLiterals;
         this.defaultDouble = defaultDouble;
@@ -87,7 +88,7 @@ class InternalJsonValuesReader {
 
         final JsonPointerTree parentPointer = this.pointerStack.peekFirst();
 
-        if (this.parsingStack.isEmpty() && token.isStructStart()) {
+        if (this.hasRootToCapture && this.parsingStack.isEmpty() && token.isStructStart()) {
             if (token == JsonToken.START_ARRAY) {
                 this.builderStack.push(new ArrayBuilder());
             } else if (token == JsonToken.START_OBJECT) {
@@ -435,6 +436,7 @@ class InternalJsonValuesReader {
 
     private final JsonParser parser;
     private final JsonPointerTree tree;
+    private final boolean hasRootToCapture;
     private final int size;
 
     private final ArrayDeque<JsonPointerTree> pointerStack;
