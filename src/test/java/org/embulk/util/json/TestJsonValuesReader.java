@@ -222,7 +222,7 @@ public class TestJsonValuesReader {
         assertEquals(JsonToken.FIELD_NAME, parser.nextToken());
         assertEquals("dummy", parser.getCurrentName());
 
-        // Confirmng that reading can continue on the same JsonParser by another JsonValuesReader.
+        // Confirming that reading can continue on the same JsonParser by another JsonValuesReader.
 
         final JsonValuesReader reader2 = JsonValuesReader.of(
                 JsonPointer.compile("/"),
