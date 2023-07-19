@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.msgpack.value.Value;
 import org.msgpack.value.ValueFactory;
 
+@SuppressWarnings("deprecation")
 public class TestJsonParser {
     @Test
     public void testString() throws Exception {

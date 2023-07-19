@@ -33,7 +33,11 @@ import org.msgpack.value.ValueFactory;
 
 /**
  * Parses a stringified JSON to MessagePack {@link org.msgpack.value.Value}.
+ *
+ * @deprecated Parsing for MessagePack {@link org.msgpack.value.Value} is deprecated.
+ *   Use {@link JsonValueParser} for {@link org.embulk.spi.json.JsonValue} instead.
  */
+@Deprecated
 public class JsonParser {
     /**
      * Creates a {@link JsonParser} instance.
