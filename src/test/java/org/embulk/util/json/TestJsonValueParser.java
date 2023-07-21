@@ -21,8 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.embulk.spi.json.JsonArray;
+import org.embulk.spi.json.JsonBoolean;
 import org.embulk.spi.json.JsonDouble;
 import org.embulk.spi.json.JsonLong;
+import org.embulk.spi.json.JsonNull;
 import org.embulk.spi.json.JsonObject;
 import org.embulk.spi.json.JsonString;
 import org.embulk.spi.json.JsonValue;
@@ -130,5 +132,76 @@ public class TestJsonValueParser {
         assertEquals(JsonLong.of(1), parser.readJsonValue());
         assertEquals(JsonLong.of(2), parser.readJsonValue());
         assertNull(parser.readJsonValue());
+    }
+
+    @Test
+    public void testCaptureJsonPointers() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder().build(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+        final CapturingPointers pointers = parser.capturingPointersBuilder()
+                .addJsonPointer("/foo")
+                .addJsonPointer("/")
+                .addJsonPointer("/qux").build();
+        final JsonValue[] values = parser.captureJsonValues(pointers);
+        assertEquals(3, values.length);
+        assertEquals(JsonLong.of(12L), values[0]);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                values[1]);
+        assertEquals(JsonObject.of("hoge", JsonString.of("fuga")), values[2]);
+    }
+
+    @Test
+    public void testCaptureDirectMemberNames() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder().build(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+        final CapturingPointers pointers = parser.capturingPointersBuilder()
+                .addDirectMemberName("foo")
+                .addDirectMemberName("qux").build();
+        final JsonValue[] values = parser.captureJsonValues(pointers);
+        assertEquals(2, values.length);
+        assertEquals(JsonLong.of(12L), values[0]);
+        assertEquals(JsonObject.of("hoge", JsonString.of("fuga")), values[1]);
+    }
+
+    @Test
+    public void testCaptureMixed() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder().build(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+        final CapturingPointers pointers = parser.capturingPointersBuilder()
+                .addDirectMemberName("foo")
+                .addJsonPointer("/")
+                .addJsonPointer("/qux").build();
+        final JsonValue[] values = parser.captureJsonValues(pointers);
+        assertEquals(3, values.length);
+        assertEquals(JsonLong.of(12L), values[0]);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                values[1]);
+        assertEquals(JsonObject.of("hoge", JsonString.of("fuga")), values[2]);
+    }
+
+    @Test
+    public void testCaptureRoot() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder().build(
+                "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+        final CapturingPointers pointers = parser.capturingPointersBuilder().build();
+        final JsonValue[] values = parser.captureJsonValues(pointers);
+        assertEquals(1, values.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                values[0]);
     }
 }

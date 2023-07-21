@@ -19,6 +19,7 @@ package org.embulk.util.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonPointer;
 import java.io.IOException;
+import java.util.List;
 import org.embulk.spi.json.JsonValue;
 
 /**
@@ -28,10 +29,21 @@ import org.embulk.spi.json.JsonValue;
  *
  * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html#cg">Groups and capturing</a>
  */
-public class CapturingJsonPointerList {
-    private CapturingJsonPointerList(final JsonPointerTree tree, final int size) {
+class CapturingJsonPointerList extends CapturingPointers {
+    private CapturingJsonPointerList(
+            final JsonPointerTree tree,
+            final int size,
+            final boolean hasLiteralsWithNumbers,
+            final boolean hasFallbacksForUnparsableNumbers,
+            final double defaultDouble,
+            final long defaultLong) {
         this.tree = tree;
         this.size = size;
+
+        this.hasLiteralsWithNumbers = hasLiteralsWithNumbers;
+        this.hasFallbacksForUnparsableNumbers = hasFallbacksForUnparsableNumbers;
+        this.defaultDouble = defaultDouble;
+        this.defaultLong = defaultLong;
     }
 
     /**
@@ -40,8 +52,19 @@ public class CapturingJsonPointerList {
      * @param pointers  capturing pointers by {@link JsonPointer}s
      * @return the new {@link CapturingJsonPointerList} created
      */
-    public static CapturingJsonPointerList of(final JsonPointer... pointers) {
-        return new CapturingJsonPointerList(JsonPointerTree.of(pointers), pointers.length);
+    static CapturingJsonPointerList of(
+            final List<JsonPointer> pointers,
+            final boolean hasLiteralsWithNumbers,
+            final boolean hasFallbacksForUnparsableNumbers,
+            final double defaultDouble,
+            final long defaultLong) {
+        return new CapturingJsonPointerList(
+                JsonPointerTree.of(pointers),
+                pointers.size(),
+                hasLiteralsWithNumbers,
+                hasFallbacksForUnparsableNumbers,
+                defaultDouble,
+                defaultLong);
     }
 
     /**
@@ -71,35 +94,16 @@ public class CapturingJsonPointerList {
      * @return an array of captured JSON values
      * @throws IOException  when failing to read
      */
-    JsonValue[] captureFromParser(final JsonParser parser) throws IOException {
-        return this.captureFromParser(parser, false, 0.0, 0L);
-    }
-
-    /**
-     * Captures JSON values by this list of capturing pointers, reading from {@link com.fasterxml.jackson.core.JsonParser}.
-     *
-     * <p>It is mostly the same with {@link #captureFromParser(JsonParser)}, but with some configuration
-     * on parsing numbers in JSON.
-     *
-     * @param parser  {@link com.fasterxml.jackson.core.JsonParser} to read from
-     * @param withNumbersFallbackWithLiterals  {@code true} to set a literal in {@link JsonDouble} and {@link JsonLong}
-     * @param defaultDouble  the default {@code double} value when the parser cannot parse a floating-point number
-     * @param defaultLong  the default {@code long} value when the parser cannot parse an integral number
-     * @return an array of captured JSON values
-     * @throws IOException  when failing to read
-     */
-    JsonValue[] captureFromParser(
-            final JsonParser parser,
-            final boolean withNumbersFallbackWithLiterals,
-            final double defaultDouble,
-            final long defaultLong) throws IOException {
+    @Override
+    public JsonValue[] captureFromParser(final JsonParser parser) throws IOException {
         final TreeBasedCapturer capturer = new TreeBasedCapturer(
                 parser,
                 this.tree,
                 this.size,
-                withNumbersFallbackWithLiterals,
-                defaultDouble,
-                defaultLong);
+                this.hasLiteralsWithNumbers,
+                this.hasFallbacksForUnparsableNumbers,
+                this.defaultDouble,
+                this.defaultLong);
 
         while (capturer.next()) {
             ;
@@ -118,4 +122,9 @@ public class CapturingJsonPointerList {
     private final JsonPointerTree tree;
 
     private final int size;
+
+    private final boolean hasLiteralsWithNumbers;
+    private final boolean hasFallbacksForUnparsableNumbers;
+    private final double defaultDouble;
+    private final long defaultLong;
 }
