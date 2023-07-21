@@ -145,6 +145,14 @@ final class InternalJsonValueReader {
                                 values.toArray(new JsonValue[values.size()]));
                     }
 
+                    if (nextToken != JsonToken.FIELD_NAME) {
+                        throw new JsonParseException(
+                                "Unexpected token "
+                                        + nextToken
+                                        + " at "
+                                        + jacksonParser.getTokenLocation());
+                    }
+
                     final String key = jacksonParser.getCurrentName();
                     if (key == null) {
                         throw new JsonParseException(
