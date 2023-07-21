@@ -37,6 +37,7 @@ public class TestJsonValueParser {
         assertNull(parser.readJsonValue());
     }
 
+    @Test
     public void testStringUnquoted() throws Exception {
         final JsonValueParser parser = JsonValueParser.builder().build("foobar");
         assertThrows(JsonParseException.class, () -> {
