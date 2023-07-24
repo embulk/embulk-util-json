@@ -41,16 +41,19 @@ class TreeBasedCapturer {
             final JsonParser parser,
             final JsonPointerTree tree,
             final int size,
-            final boolean withNumbersFallbackWithLiterals,
+            final boolean hasLiteralsWithNumbers,
+            final boolean hasFallbacksForUnparsableNumbers,
             final double defaultDouble,
             final long defaultLong) {
         this.parser = parser;
         this.tree = tree;
         this.hasRootToCapture = this.tree.captures().isEmpty();
 
-        this.withNumbersFallbackWithLiterals = withNumbersFallbackWithLiterals;
+        this.hasLiteralsWithNumbers = hasLiteralsWithNumbers;
+        this.hasFallbacksForUnparsableNumbers = hasFallbacksForUnparsableNumbers;
         this.defaultDouble = defaultDouble;
         this.defaultLong = defaultLong;
+
         this.size = size;
 
         this.pointerStack = new ArrayDeque<>();
@@ -254,19 +257,25 @@ class TreeBasedCapturer {
         return this.values;
     }
 
-    private double getDoubleValue() {
+    private double getDoubleValue() throws IOException {
         try {
             return this.parser.getDoubleValue();
         } catch (final IOException ex) {
-            return this.defaultDouble;
+            if (this.hasFallbacksForUnparsableNumbers) {
+                return this.defaultDouble;
+            }
+            throw ex;
         }
     }
 
-    private long getLongValue() {
+    private long getLongValue() throws IOException {
         try {
             return this.parser.getLongValue();
         } catch (final IOException ex) {
-            return this.defaultLong;
+            if (this.hasFallbacksForUnparsableNumbers) {
+                return this.defaultLong;
+            }
+            throw ex;
         }
     }
 
@@ -279,15 +288,17 @@ class TreeBasedCapturer {
             case VALUE_FALSE:
                 return JsonBoolean.FALSE;
             case VALUE_NUMBER_FLOAT:
-                if (this.withNumbersFallbackWithLiterals) {
+                if (this.hasLiteralsWithNumbers) {
                     return JsonDouble.withLiteral(this.getDoubleValue(), this.parser.getValueAsString());
+                } else {
+                    return JsonDouble.of(this.getDoubleValue());  // throws JsonParseException
                 }
-                return JsonDouble.of(this.parser.getDoubleValue());  // throws JsonParseException
             case VALUE_NUMBER_INT:
-                if (this.withNumbersFallbackWithLiterals) {
+                if (this.hasLiteralsWithNumbers) {
                     return JsonLong.withLiteral(this.getLongValue(), this.parser.getValueAsString());
+                } else {
+                    return JsonLong.of(this.getLongValue());  // throws JsonParseException
                 }
-                return JsonLong.of(this.parser.getLongValue());  // throws JsonParseException
             case VALUE_STRING:
                 return JsonString.of(this.parser.getText());
             default:
@@ -433,7 +444,8 @@ class TreeBasedCapturer {
         private final ArrayList<Map.Entry<String, JsonValue>> entries;
     }
 
-    private final boolean withNumbersFallbackWithLiterals;
+    private final boolean hasLiteralsWithNumbers;
+    private final boolean hasFallbacksForUnparsableNumbers;
     private final double defaultDouble;
     private final long defaultLong;
 

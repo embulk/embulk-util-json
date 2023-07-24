@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonToken;
+import java.util.Arrays;
 import org.embulk.spi.json.JsonArray;
 import org.embulk.spi.json.JsonBoolean;
 import org.embulk.spi.json.JsonLong;
@@ -40,7 +41,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
@@ -72,7 +73,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
@@ -102,7 +103,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
@@ -134,7 +135,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
@@ -164,7 +165,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/qux/hoge"));
@@ -188,7 +189,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
 
@@ -210,7 +211,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/qux/hoge"));
@@ -234,7 +235,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
                 JsonPointer.compile("/qux/hoge"));
 
@@ -258,7 +259,7 @@ public class TestCapturingJsonPointerList {
 
         assertEquals(JsonToken.START_ARRAY, parser.nextToken());
 
-        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers = capturingPointers(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/bar"),
@@ -297,7 +298,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"bar\":true,\"foo\":12}{\"foo\":84,\"bar\":false}{\"foo\":123,\"bar\":false}");
 
-        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers = capturingPointers(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/bar"),
@@ -336,7 +337,7 @@ public class TestCapturingJsonPointerList {
 
         assertEquals(JsonToken.START_ARRAY, parser.nextToken());
 
-        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers = capturingPointers(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"));
 
@@ -368,7 +369,7 @@ public class TestCapturingJsonPointerList {
 
     @Test
     public void testReadMultiParsers() throws Exception {
-        final CapturingJsonPointerList capturingPointers = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers = capturingPointers(
                 JsonPointer.compile("/foo"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/bar"),
@@ -411,7 +412,7 @@ public class TestCapturingJsonPointerList {
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}{\"dummy\":{\"in\":98}}{\"unreach\":7}");
 
-        final CapturingJsonPointerList capturingPointers1 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/qux"),
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/baz"),
@@ -440,7 +441,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that reading can continue on the same JsonParser by another CapturingJsonPointerList.
 
-        final CapturingJsonPointerList capturingPointers2 = CapturingJsonPointerList.of(
+        final CapturingJsonPointerList capturingPointers2 = capturingPointers(
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/in"));
 
@@ -464,5 +465,9 @@ public class TestCapturingJsonPointerList {
         // Confirming that JsonParser reaches at the end as expected.
 
         assertNull(parser.nextToken());
+    }
+
+    private static CapturingJsonPointerList capturingPointers(final JsonPointer... pointers) {
+        return CapturingJsonPointerList.of(Arrays.asList(pointers), false, false, 0.0, 0L);
     }
 }

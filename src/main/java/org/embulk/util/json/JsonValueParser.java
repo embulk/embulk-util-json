@@ -92,7 +92,7 @@ public final class JsonValueParser implements Closeable {
          * from {@link com.fasterxml.jackson.core.JsonParser} are passed as literals.
          *
          * <p>The supplemental literal strings would help with representing unparsable numbers, such as integers
-         * larger than {@link Long.MAX_VALUE}, but literals would consume larger object heap memory.
+         * larger than {@link java.lang.Long#MAX_VALUE}, but literals would consume larger object heap memory.
          *
          * @return this builder
          */
@@ -209,6 +209,21 @@ public final class JsonValueParser implements Closeable {
     }
 
     /**
+     * Returns a new builder for {@link CapturingPointers}.
+     *
+     * <p>The same configurations (such as {@link Builder#enableSupplementalLiteralsWithNumbers}) apply.
+     *
+     * @return the new builder for {@link CapturingPointers}
+     */
+    public CapturingPointers.Builder capturingPointersBuilder() {
+        return new CapturingPointers.Builder(
+                this.hasLiteralsWithNumbers,
+                this.hasFallbacksForUnparsableNumbers,
+                this.defaultDouble,
+                this.defaultLong);
+    }
+
+    /**
      * Reads a {@link org.embulk.spi.json.JsonValue} from the parser.
      *
      * @return the JSON value
@@ -217,6 +232,17 @@ public final class JsonValueParser implements Closeable {
      */
     public JsonValue readJsonValue() throws IOException {
         return this.valueReader.read(this.jacksonParser);
+    }
+
+    /**
+     * Captures {@link org.embulk.spi.json.JsonValue}s from the parser with the specified capturing pointers.
+     *
+     * @return the captured JSON values
+     * @throws IOException  if failing to read JSON
+     * @throws JsonParseException  if failing to parse JSON
+     */
+    public JsonValue[] captureJsonValues(final CapturingPointers capturingPointers) throws IOException {
+        return capturingPointers.captureFromParser(this.jacksonParser);
     }
 
     /**

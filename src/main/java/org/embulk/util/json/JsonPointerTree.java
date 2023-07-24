@@ -189,7 +189,7 @@ class JsonPointerTree extends AbstractMap<String, JsonPointerTree> {
     /**
      * Builds a {@link JsonPointerTree} from an array of {@link JsonPointer}s.
      *
-     * <p>It assigns the indices of the array as captures of the {@code JsonPointerTree}.
+     * <p>It assigns the indices of the array as capturing pointers of the {@code JsonPointerTree}.
      *
      * @param pointers  an array of {@code JsonPointer}s
      * @return the new {@code JsonPointerTree} instance
@@ -198,6 +198,24 @@ class JsonPointerTree extends AbstractMap<String, JsonPointerTree> {
         final Builder builder = builder();
         for (int i = 0; i < pointers.length; i++) {
             builder.add(pointers[i], i);
+        }
+        return builder.build();
+    }
+
+    /**
+     * Builds a {@link JsonPointerTree} from a list of {@link JsonPointer}s.
+     *
+     * <p>It assigns the indices of the list as capturing pointers of the {@code JsonPointerTree}.
+     *
+     * @param pointers  a list of {@code JsonPointer}s
+     * @return the new {@code JsonPointerTree} instance
+     */
+    static JsonPointerTree of(final List<JsonPointer> pointers) {
+        final Builder builder = builder();
+        int i = 0;
+        for (final JsonPointer pointer : pointers) {
+            builder.add(pointer, i);
+            i++;
         }
         return builder.build();
     }
