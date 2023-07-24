@@ -218,7 +218,7 @@ public abstract class CapturingPointers {
         return JsonPointer.compile("/" + SLASH.matcher(untilde).replaceAll("~1"));
     }
 
-    private static Pattern TILDE = Pattern.compile("~");
+    private static final Pattern TILDE = Pattern.compile("~");
 
-    private static Pattern SLASH = Pattern.compile("/");
+    private static final Pattern SLASH = Pattern.compile("/");
 }
