@@ -138,7 +138,7 @@ public class TestJsonValueParser {
     public void testCaptureJsonPointers() throws Exception {
         final JsonValueParser parser = JsonValueParser.builder().build(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final CapturingPointers pointers = parser.capturingPointersBuilder()
+        final CapturingPointers pointers = CapturingPointers.builder()
                 .addJsonPointer("/foo")
                 .addJsonPointer("/")
                 .addJsonPointer("/qux").build();
@@ -159,7 +159,7 @@ public class TestJsonValueParser {
     public void testCaptureDirectMemberNames() throws Exception {
         final JsonValueParser parser = JsonValueParser.builder().build(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final CapturingPointers pointers = parser.capturingPointersBuilder()
+        final CapturingPointers pointers = CapturingPointers.builder()
                 .addDirectMemberName("foo")
                 .addDirectMemberName("qux").build();
         final JsonValue[] values = parser.captureJsonValues(pointers);
@@ -172,7 +172,7 @@ public class TestJsonValueParser {
     public void testCaptureMixed() throws Exception {
         final JsonValueParser parser = JsonValueParser.builder().build(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final CapturingPointers pointers = parser.capturingPointersBuilder()
+        final CapturingPointers pointers = CapturingPointers.builder()
                 .addDirectMemberName("foo")
                 .addJsonPointer("/")
                 .addJsonPointer("/qux").build();
@@ -193,7 +193,7 @@ public class TestJsonValueParser {
     public void testCaptureRoot() throws Exception {
         final JsonValueParser parser = JsonValueParser.builder().build(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final CapturingPointers pointers = parser.capturingPointersBuilder().build();
+        final CapturingPointers pointers = CapturingPointers.builder().build();
         final JsonValue[] values = parser.captureJsonValues(pointers);
         assertEquals(1, values.length);
         assertEquals(

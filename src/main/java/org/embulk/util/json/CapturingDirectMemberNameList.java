@@ -27,12 +27,7 @@ import java.util.Map;
 import org.embulk.spi.json.JsonValue;
 
 class CapturingDirectMemberNameList extends CapturingPointers {
-    private CapturingDirectMemberNameList(
-            final List<String> memberNames,
-            final boolean hasLiteralsWithNumbers,
-            final boolean hasFallbacksForUnparsableNumbers,
-            final double defaultDouble,
-            final long defaultLong) {
+    private CapturingDirectMemberNameList(final List<String> memberNames) {
         final HashMap<String, Integer> memberNamesMap = new HashMap<>();
         int i = 0;
         for (final String memberName : memberNames) {
@@ -42,30 +37,16 @@ class CapturingDirectMemberNameList extends CapturingPointers {
         this.memberNames = Collections.unmodifiableMap(memberNamesMap);
 
         this.size = memberNames.size();
-
-        this.valueReader = new InternalJsonValueReader(
-                hasLiteralsWithNumbers,
-                hasFallbacksForUnparsableNumbers,
-                defaultDouble,
-                defaultLong);
     }
 
-    static CapturingDirectMemberNameList of(
-            final List<String> memberNames,
-            final boolean hasLiteralsWithNumbers,
-            final boolean hasFallbacksForUnparsableNumbers,
-            final double defaultDouble,
-            final long defaultLong) {
-        return new CapturingDirectMemberNameList(
-                Collections.unmodifiableList(new ArrayList<>(memberNames)),
-                hasLiteralsWithNumbers,
-                hasFallbacksForUnparsableNumbers,
-                defaultDouble,
-                defaultLong);
+    static CapturingDirectMemberNameList of(final List<String> memberNames) {
+        return new CapturingDirectMemberNameList(Collections.unmodifiableList(new ArrayList<>(memberNames)));
     }
 
     @Override
-    public JsonValue[] captureFromParser(final JsonParser jacksonParser) throws IOException {
+    JsonValue[] captureFromParser(
+            final JsonParser jacksonParser,
+            final InternalJsonValueReader valueReader) throws IOException {
         final JsonValue[] values = new JsonValue[this.size];
         for (int i = 0; i < values.length; i++) {
             values[i] = null;
@@ -113,9 +94,9 @@ class CapturingDirectMemberNameList extends CapturingPointers {
 
             final Integer index = this.memberNames.get(key);
             if (index == null) {
-                this.valueReader.skip(jacksonParser);
+                valueReader.skip(jacksonParser);
             } else {
-                values[index] = this.valueReader.read(jacksonParser);
+                values[index] = valueReader.read(jacksonParser);
             }
         }
 
@@ -125,6 +106,4 @@ class CapturingDirectMemberNameList extends CapturingPointers {
     private final Map<String, Integer> memberNames;
 
     private final int size;
-
-    private final InternalJsonValueReader valueReader;
 }

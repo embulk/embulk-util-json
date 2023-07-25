@@ -39,7 +39,7 @@ import org.embulk.spi.json.JsonValue;
  *
  * <p>For example, consider {@link CapturingPointers} created like the following.</p>
  *
- * <pre>{@code  final CapturingPointers pointers = jsonValueParser.capturingPointerBuilder()
+ * <pre>{@code  final CapturingPointers pointers = CapturingPointers.builder()
  *       .addJsonPointer("/foo")
  *       .addJsonPointer("/bar")
  *       .addJsonPointer("/baz").build();}</pre>
@@ -61,15 +61,7 @@ public abstract class CapturingPointers {
      * <p>Use {@link JsonValueParser#capturingPointersBuilder} to create a builder instance.
      */
     public static class Builder {
-        Builder(final boolean hasLiteralsWithNumbers,
-                final boolean hasFallbacksForUnparsableNumbers,
-                final double defaultDouble,
-                final long defaultLong) {
-            this.hasLiteralsWithNumbers = hasLiteralsWithNumbers;
-            this.hasFallbacksForUnparsableNumbers = hasFallbacksForUnparsableNumbers;
-            this.defaultDouble = defaultDouble;
-            this.defaultLong = defaultLong;
-
+        Builder() {
             this.directMemberNames = new ArrayList<>();
             this.jsonPointers = new ArrayList<>();
             this.jsonPointerExceptions = new ArrayList<>();
@@ -155,11 +147,7 @@ public abstract class CapturingPointers {
         public CapturingPointers build() {
             assert this.directMemberNames.size() == this.jsonPointers.size();
             if (this.directMemberNames.isEmpty()) {
-                return new CapturingPointerToRoot(
-                        this.hasLiteralsWithNumbers,
-                        this.hasFallbacksForUnparsableNumbers,
-                        this.defaultDouble,
-                        this.defaultLong);
+                return CapturingPointerToRoot.INSTANCE;
             }
 
             if (this.hasAtLeastOneJsonPointer) {
@@ -172,26 +160,11 @@ public abstract class CapturingPointers {
                     throw ex;
                 }
 
-                return CapturingJsonPointerList.of(
-                        this.jsonPointers,
-                        this.hasLiteralsWithNumbers,
-                        this.hasFallbacksForUnparsableNumbers,
-                        this.defaultDouble,
-                        this.defaultLong);
+                return CapturingJsonPointerList.of(this.jsonPointers);
             } else {
-                return CapturingDirectMemberNameList.of(
-                        this.directMemberNames,
-                        this.hasLiteralsWithNumbers,
-                        this.hasFallbacksForUnparsableNumbers,
-                        this.defaultDouble,
-                        this.defaultLong);
+                return CapturingDirectMemberNameList.of(this.directMemberNames);
             }
         }
-
-        private final boolean hasLiteralsWithNumbers;
-        private final boolean hasFallbacksForUnparsableNumbers;
-        private final double defaultDouble;
-        private final long defaultLong;
 
         private final ArrayList<String> directMemberNames;
         private final ArrayList<JsonPointer> jsonPointers;
@@ -202,12 +175,23 @@ public abstract class CapturingPointers {
     }
 
     /**
+     * Returns a new builder for {@link CapturingPointers}.
+     *
+     * @return the new builder for {@link CapturingPointers}
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Captures JSON values with the capturing pointers from the parser.
      *
      * @param parser  the parser to capture values from
      * @return the array of captured JSON values
      */
-    public abstract JsonValue[] captureFromParser(final JsonParser parser) throws IOException;
+    abstract JsonValue[] captureFromParser(
+            final JsonParser parser,
+            final InternalJsonValueReader valueReader) throws IOException;
 
     static JsonPointer compileMemberNameToJsonPointer(final String memberName) {
         if ((!memberName.contains("~")) && (!memberName.contains("/"))) {

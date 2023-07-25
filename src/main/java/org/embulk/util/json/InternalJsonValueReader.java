@@ -42,6 +42,22 @@ final class InternalJsonValueReader {
         this.defaultLong = defaultLong;
     }
 
+    boolean hasLiteralsWithNumbers() {
+        return this.hasLiteralsWithNumbers;
+    }
+
+    boolean hasFallbacksForUnparsableNumbers() {
+        return this.hasFallbacksForUnparsableNumbers;
+    }
+
+    double defaultDouble() {
+        return this.defaultDouble;
+    }
+
+    long defaultLong() {
+        return this.defaultLong;
+    }
+
     JsonValue read(final JsonParser jacksonParser) throws IOException {
         try {
             final JsonToken token = jacksonParser.nextToken();

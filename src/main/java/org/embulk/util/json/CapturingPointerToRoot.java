@@ -21,21 +21,17 @@ import java.io.IOException;
 import org.embulk.spi.json.JsonValue;
 
 class CapturingPointerToRoot extends CapturingPointers {
-    CapturingPointerToRoot(
-            final boolean hasLiteralsWithNumbers,
-            final boolean hasFallbacksForUnparsableNumbers,
-            final double defaultDouble,
-            final long defaultLong) {
-        this.valueReader = new InternalJsonValueReader(
-                hasLiteralsWithNumbers, hasFallbacksForUnparsableNumbers, defaultDouble, defaultLong);
+    private CapturingPointerToRoot() {
     }
 
     @Override
-    public JsonValue[] captureFromParser(final JsonParser jacksonParser) throws IOException {
+    JsonValue[] captureFromParser(
+            final JsonParser jacksonParser,
+            final InternalJsonValueReader valueReader) throws IOException {
         final JsonValue[] values = new JsonValue[1];
-        values[0] = this.valueReader.read(jacksonParser);
+        values[0] = valueReader.read(jacksonParser);
         return values;
     }
 
-    private final InternalJsonValueReader valueReader;
+    static final CapturingPointerToRoot INSTANCE = new CapturingPointerToRoot();
 }
