@@ -205,6 +205,7 @@ class TreeBasedCapturer {
 
             if (value != null) {
                 final JsonPointerTree thisPointer = this.pointerStack.peekFirst();
+                assert thisPointer != null;  // this.pointerStack must not be empty here, but asserting.
                 for (final int capture : thisPointer.captures()) {
                     this.values[capture] = value;
                 }
