@@ -37,6 +37,7 @@ public class TestCapturingDirectMemberNameList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":{\"ignored\":[1,2,{},\"skipped\"]},\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
 
         final CapturingDirectMemberNameList capturingMembers1 = capturingMembers(
                 "bar",
@@ -44,7 +45,7 @@ public class TestCapturingDirectMemberNameList {
                 "dummy",
                 "qux");
 
-        final JsonValue[] actual1 = capturingMembers1.captureFromParser(parser);
+        final JsonValue[] actual1 = capturingMembers1.captureFromParser(parser, reader);
 
         assertEquals(4, actual1.length);
         assertEquals(JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE), actual1[0]);
@@ -59,6 +60,6 @@ public class TestCapturingDirectMemberNameList {
     }
 
     private static CapturingDirectMemberNameList capturingMembers(final String... memberNames) {
-        return CapturingDirectMemberNameList.of(Arrays.asList(memberNames), false, false, 0.0, 0L);
+        return CapturingDirectMemberNameList.of(Arrays.asList(memberNames));
     }
 }

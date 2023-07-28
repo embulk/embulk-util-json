@@ -209,21 +209,6 @@ public final class JsonValueParser implements Closeable {
     }
 
     /**
-     * Returns a new builder for {@link CapturingPointers}.
-     *
-     * <p>The same configurations (such as {@link Builder#enableSupplementalLiteralsWithNumbers}) apply.
-     *
-     * @return the new builder for {@link CapturingPointers}
-     */
-    public CapturingPointers.Builder capturingPointersBuilder() {
-        return new CapturingPointers.Builder(
-                this.hasLiteralsWithNumbers,
-                this.hasFallbacksForUnparsableNumbers,
-                this.defaultDouble,
-                this.defaultLong);
-    }
-
-    /**
      * Reads a {@link org.embulk.spi.json.JsonValue} from the parser.
      *
      * @return the JSON value
@@ -242,7 +227,7 @@ public final class JsonValueParser implements Closeable {
      * @throws JsonParseException  if failing to parse JSON
      */
     public JsonValue[] captureJsonValues(final CapturingPointers capturingPointers) throws IOException {
-        return capturingPointers.captureFromParser(this.jacksonParser);
+        return capturingPointers.captureFromParser(this.jacksonParser, this.valueReader);
     }
 
     /**

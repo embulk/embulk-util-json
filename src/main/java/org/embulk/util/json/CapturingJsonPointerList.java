@@ -30,20 +30,9 @@ import org.embulk.spi.json.JsonValue;
  * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html#cg">Groups and capturing</a>
  */
 class CapturingJsonPointerList extends CapturingPointers {
-    private CapturingJsonPointerList(
-            final JsonPointerTree tree,
-            final int size,
-            final boolean hasLiteralsWithNumbers,
-            final boolean hasFallbacksForUnparsableNumbers,
-            final double defaultDouble,
-            final long defaultLong) {
+    private CapturingJsonPointerList(final JsonPointerTree tree, final int size) {
         this.tree = tree;
         this.size = size;
-
-        this.hasLiteralsWithNumbers = hasLiteralsWithNumbers;
-        this.hasFallbacksForUnparsableNumbers = hasFallbacksForUnparsableNumbers;
-        this.defaultDouble = defaultDouble;
-        this.defaultLong = defaultLong;
     }
 
     /**
@@ -52,19 +41,8 @@ class CapturingJsonPointerList extends CapturingPointers {
      * @param pointers  capturing pointers by {@link JsonPointer}s
      * @return the new {@link CapturingJsonPointerList} created
      */
-    static CapturingJsonPointerList of(
-            final List<JsonPointer> pointers,
-            final boolean hasLiteralsWithNumbers,
-            final boolean hasFallbacksForUnparsableNumbers,
-            final double defaultDouble,
-            final long defaultLong) {
-        return new CapturingJsonPointerList(
-                JsonPointerTree.of(pointers),
-                pointers.size(),
-                hasLiteralsWithNumbers,
-                hasFallbacksForUnparsableNumbers,
-                defaultDouble,
-                defaultLong);
+    static CapturingJsonPointerList of(final List<JsonPointer> pointers) {
+        return new CapturingJsonPointerList(JsonPointerTree.of(pointers), pointers.size());
     }
 
     /**
@@ -78,7 +56,7 @@ class CapturingJsonPointerList extends CapturingPointers {
      *
      * <p>The returned array of JSON values has the same length with the number of JSON Pointers given to
      * {@link CapturingJsonPointerList}. The indices in the returned array correspond to the indices of
-     * {@link JsonPointer}s given to {@link CapturingJsonPointerList} by {@link #of(JsonPointer...)}.
+     * {@link JsonPointer}s given to {@link CapturingJsonPointerList} by {@link #of(List)}.
      *
      * <p>For example, consider {@link CapturingJsonPointerList} created like the following.</p>
      *
@@ -95,15 +73,12 @@ class CapturingJsonPointerList extends CapturingPointers {
      * @throws IOException  when failing to read
      */
     @Override
-    public JsonValue[] captureFromParser(final JsonParser parser) throws IOException {
+    JsonValue[] captureFromParser(final JsonParser parser, final InternalJsonValueReader valueReader) throws IOException {
         final TreeBasedCapturer capturer = new TreeBasedCapturer(
                 parser,
                 this.tree,
                 this.size,
-                this.hasLiteralsWithNumbers,
-                this.hasFallbacksForUnparsableNumbers,
-                this.defaultDouble,
-                this.defaultLong);
+                valueReader);
 
         while (capturer.next()) {
             ;
@@ -122,9 +97,4 @@ class CapturingJsonPointerList extends CapturingPointers {
     private final JsonPointerTree tree;
 
     private final int size;
-
-    private final boolean hasLiteralsWithNumbers;
-    private final boolean hasFallbacksForUnparsableNumbers;
-    private final double defaultDouble;
-    private final long defaultLong;
 }
