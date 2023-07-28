@@ -29,9 +29,9 @@ import org.embulk.spi.json.JsonValue;
  * <p>It consists of a list of pointers, such as JSON Pointers, that represent positions in a JSON
  * structure value, an array or an object.
  *
- * <p>Its {@link #captureFromParser(JsonParser)} captures JSON values by the "capturing pointers",
- * reading from {@link com.fasterxml.jackson.core.JsonParser}. The captured JSON values are returned
- * as an array of {@link JsonValue}s.
+ * <p>Its {@link #captureFromParser(JsonParser, InternalJsonValueReader)} captures JSON values by
+ * the "capturing pointers", reading from {@link com.fasterxml.jackson.core.JsonParser}. The
+ * captured JSON values are returned as an array of {@link JsonValue}s.
  *
  * <p>The returned array of JSON values has the same length with the number of pointers represented
  * by this {@link CapturingPointers}. The indices in the returned array correspond to the indices of
@@ -57,8 +57,6 @@ public abstract class CapturingPointers {
 
     /**
      * Builds {@link CapturingPointers}.
-     *
-     * <p>Use {@link JsonValueParser#capturingPointersBuilder} to create a builder instance.
      */
     public static class Builder {
         Builder() {

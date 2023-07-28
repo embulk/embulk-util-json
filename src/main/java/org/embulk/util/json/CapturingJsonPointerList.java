@@ -56,7 +56,7 @@ class CapturingJsonPointerList extends CapturingPointers {
      *
      * <p>The returned array of JSON values has the same length with the number of JSON Pointers given to
      * {@link CapturingJsonPointerList}. The indices in the returned array correspond to the indices of
-     * {@link JsonPointer}s given to {@link CapturingJsonPointerList} by {@link #of(JsonPointer...)}.
+     * {@link JsonPointer}s given to {@link CapturingJsonPointerList} by {@link #of(List)}.
      *
      * <p>For example, consider {@link CapturingJsonPointerList} created like the following.</p>
      *
