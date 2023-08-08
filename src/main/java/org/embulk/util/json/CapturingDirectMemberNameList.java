@@ -47,15 +47,10 @@ class CapturingDirectMemberNameList extends CapturingPointers {
     JsonValue[] captureFromParser(
             final JsonParser jacksonParser,
             final InternalJsonValueReader valueReader) throws IOException {
-        final JsonValue[] values = new JsonValue[this.size];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = null;
-        }
-
         try {
             final JsonToken firstToken = jacksonParser.nextToken();
             if (firstToken == null) {
-                throw new JsonParseException("Failed to parse JSON");
+                return null;
             }
             if (firstToken != JsonToken.START_OBJECT) {
                 throw new JsonParseException("Failed to parse JSON: Expected JSON Object, but " + firstToken.toString());
@@ -68,6 +63,11 @@ class CapturingDirectMemberNameList extends CapturingPointers {
             throw ex;
         } catch (final RuntimeException ex) {
             throw new JsonParseException("Failed to parse JSON", ex);
+        }
+
+        final JsonValue[] values = new JsonValue[this.size];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = null;
         }
 
         while (true) {

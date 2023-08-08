@@ -80,6 +80,11 @@ class CapturingJsonPointerList extends CapturingPointers {
                 this.size,
                 valueReader);
 
+        final boolean isFirstAvailable = capturer.next();
+        if (!isFirstAvailable) {
+            return null;
+        }
+
         while (capturer.next()) {
             ;
         }

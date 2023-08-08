@@ -185,7 +185,7 @@ public abstract class CapturingPointers {
      * Captures JSON values with the capturing pointers from the parser.
      *
      * @param parser  the parser to capture values from
-     * @return the array of captured JSON values
+     * @return the array of captured JSON values, or {@code null} if the parser reaches at the end of input in the beginning
      */
     abstract JsonValue[] captureFromParser(
             final JsonParser parser,

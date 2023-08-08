@@ -153,6 +153,10 @@ public class TestJsonValueParser {
                         "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
                 values[1]);
         assertEquals(JsonObject.of("hoge", JsonString.of("fuga")), values[2]);
+
+        // Confirming that JsonValueParser reaches at the end as expected.
+
+        assertNull(parser.captureJsonValues(pointers));
     }
 
     @Test
@@ -166,6 +170,10 @@ public class TestJsonValueParser {
         assertEquals(2, values.length);
         assertEquals(JsonLong.of(12L), values[0]);
         assertEquals(JsonObject.of("hoge", JsonString.of("fuga")), values[1]);
+
+        // Confirming that JsonValueParser reaches at the end as expected.
+
+        assertNull(parser.captureJsonValues(pointers));
     }
 
     @Test
@@ -187,6 +195,10 @@ public class TestJsonValueParser {
                         "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
                 values[1]);
         assertEquals(JsonObject.of("hoge", JsonString.of("fuga")), values[2]);
+
+        // Confirming that JsonValueParser reaches at the end as expected.
+
+        assertNull(parser.captureJsonValues(pointers));
     }
 
     @Test
@@ -203,5 +215,9 @@ public class TestJsonValueParser {
                         "baz", JsonNull.NULL,
                         "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
                 values[0]);
+
+        // Confirming that JsonValueParser reaches at the end as expected.
+
+        assertNull(parser.captureJsonValues(pointers));
     }
 }
