@@ -65,6 +65,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -96,6 +97,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -129,6 +131,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -160,6 +163,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -185,6 +189,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -208,6 +213,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -233,6 +239,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -256,6 +263,7 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -298,6 +306,7 @@ public class TestCapturingJsonPointerList {
 
         assertEquals(JsonToken.END_ARRAY, parser.nextToken());
 
+        assertNull(capturingPointers.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -336,6 +345,7 @@ public class TestCapturingJsonPointerList {
         assertEquals(JsonBoolean.FALSE, actual3[2]);
         assertNull(actual3[3]);
 
+        assertNull(capturingPointers.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -375,6 +385,7 @@ public class TestCapturingJsonPointerList {
 
         assertEquals(JsonToken.END_ARRAY, parser.nextToken());
 
+        assertNull(capturingPointers.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 
@@ -401,6 +412,7 @@ public class TestCapturingJsonPointerList {
         assertEquals(JsonObject.of("foo", JsonLong.of(12), "bar", JsonBoolean.TRUE), actual1[1]);
         assertEquals(JsonBoolean.TRUE, actual1[2]);
         assertNull(actual1[3]);
+        assertNull(capturingPointers.captureFromParser(parser1, reader));
         assertNull(parser1.nextToken());
 
         assertEquals(4, actual2.length);
@@ -408,6 +420,7 @@ public class TestCapturingJsonPointerList {
         assertEquals(JsonObject.of("foo", JsonLong.of(84), "bar", JsonBoolean.FALSE), actual2[1]);
         assertEquals(JsonBoolean.FALSE, actual2[2]);
         assertNull(actual2[3]);
+        assertNull(capturingPointers.captureFromParser(parser2, reader));
         assertNull(parser2.nextToken());
 
         assertEquals(4, actual3.length);
@@ -415,6 +428,7 @@ public class TestCapturingJsonPointerList {
         assertEquals(JsonObject.of("foo", JsonLong.of(123), "bar", JsonBoolean.FALSE), actual3[1]);
         assertEquals(JsonBoolean.FALSE, actual3[2]);
         assertNull(actual3[3]);
+        assertNull(capturingPointers.captureFromParser(parser3, reader));
         assertNull(parser3.nextToken());
     }
 
@@ -477,6 +491,8 @@ public class TestCapturingJsonPointerList {
 
         // Confirming that JsonParser reaches at the end as expected.
 
+        assertNull(capturingPointers1.captureFromParser(parser, reader));
+        assertNull(capturingPointers2.captureFromParser(parser, reader));
         assertNull(parser.nextToken());
     }
 

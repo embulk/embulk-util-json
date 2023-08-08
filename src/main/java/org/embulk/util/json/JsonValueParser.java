@@ -211,7 +211,7 @@ public final class JsonValueParser implements Closeable {
     /**
      * Reads a {@link org.embulk.spi.json.JsonValue} from the parser.
      *
-     * @return the JSON value
+     * @return the JSON value, or {@code null} if the parser reaches at the end of input in the beginning
      * @throws IOException  if failing to read JSON
      * @throws JsonParseException  if failing to parse JSON
      */
@@ -222,7 +222,7 @@ public final class JsonValueParser implements Closeable {
     /**
      * Captures {@link org.embulk.spi.json.JsonValue}s from the parser with the specified capturing pointers.
      *
-     * @return the captured JSON values
+     * @return an array of the captured JSON values, or {@code null} if the parser reaches at the end of input in the beginning
      * @throws IOException  if failing to read JSON
      * @throws JsonParseException  if failing to parse JSON
      */

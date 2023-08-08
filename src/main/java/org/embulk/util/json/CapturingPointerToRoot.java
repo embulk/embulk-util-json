@@ -28,8 +28,13 @@ class CapturingPointerToRoot extends CapturingPointers {
     JsonValue[] captureFromParser(
             final JsonParser jacksonParser,
             final InternalJsonValueReader valueReader) throws IOException {
+        final JsonValue value = valueReader.read(jacksonParser);
+        if (value == null) {
+            return null;
+        }
+
         final JsonValue[] values = new JsonValue[1];
-        values[0] = valueReader.read(jacksonParser);
+        values[0] = value;
         return values;
     }
 
