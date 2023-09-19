@@ -18,6 +18,7 @@ package org.embulk.util.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.core.JsonToken;
 import java.io.IOException;
 import java.util.List;
 import org.embulk.spi.json.JsonValue;
@@ -71,6 +72,7 @@ class CapturingJsonPointerList extends CapturingPointers {
      * @param parser  {@link com.fasterxml.jackson.core.JsonParser} to read from
      * @return an array of captured JSON values
      * @throws IOException  when failing to read
+     * @throws InvalidJsonValueException  if the JSON value is not a JSON object while it is configured to accept only JSON objects
      */
     @Override
     JsonValue[] captureFromParser(final JsonParser parser, final InternalJsonValueReader valueReader) throws IOException {
@@ -87,6 +89,10 @@ class CapturingJsonPointerList extends CapturingPointers {
 
         while (capturer.next()) {
             ;
+        }
+
+        if (valueReader.isOnlyJsonObjects() && capturer.firstToken() != JsonToken.START_OBJECT) {
+            throw new InvalidJsonValueException("Expected JSON Object, but " + capturer.firstToken());
         }
 
         return capturer.peekValues();

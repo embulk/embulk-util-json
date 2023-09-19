@@ -34,6 +34,7 @@ import org.embulk.spi.json.JsonValue;
 public final class JsonValueParser implements Closeable {
     private JsonValueParser(
             final com.fasterxml.jackson.core.JsonParser jacksonParser,
+            final boolean onlyJsonObjects,
             final int depthToFlattenJsonArrays,
             final boolean hasLiteralsWithNumbers,
             final boolean hasFallbacksForUnparsableNumbers,
@@ -41,7 +42,8 @@ public final class JsonValueParser implements Closeable {
             final long defaultLong) {
         this.jacksonParser = Objects.requireNonNull(jacksonParser);
         this.valueReader = new InternalJsonValueReader(
-                hasLiteralsWithNumbers, hasFallbacksForUnparsableNumbers, defaultDouble, defaultLong);
+                onlyJsonObjects, hasLiteralsWithNumbers, hasFallbacksForUnparsableNumbers, defaultDouble, defaultLong);
+        this.onlyJsonObjects = onlyJsonObjects;
         this.depthToFlattenJsonArrays = depthToFlattenJsonArrays;
         this.hasLiteralsWithNumbers = hasLiteralsWithNumbers;
         this.hasFallbacksForUnparsableNumbers = hasFallbacksForUnparsableNumbers;
@@ -56,6 +58,7 @@ public final class JsonValueParser implements Closeable {
         Builder(final JsonFactory factory) {
             this.factory = Objects.requireNonNull(factory);
             this.root = null;
+            this.onlyJsonObjects = false;
             this.depthToFlattenJsonArrays = 0;
             this.hasLiteralsWithNumbers = false;
             this.hasFallbacksForUnparsableNumbers = false;
@@ -84,6 +87,11 @@ public final class JsonValueParser implements Closeable {
          */
         public Builder root(final String root) {
             this.root = JsonPointer.compile(root);
+            return this;
+        }
+
+        public Builder onlyJsonObjects() {
+            this.onlyJsonObjects = true;
             return this;
         }
 
@@ -140,6 +148,7 @@ public final class JsonValueParser implements Closeable {
         public JsonValueParser build(final String json) throws IOException {
             return new JsonValueParser(
                     buildJacksonParser(json),
+                    this.onlyJsonObjects,
                     this.depthToFlattenJsonArrays,
                     this.hasLiteralsWithNumbers,
                     this.hasFallbacksForUnparsableNumbers,
@@ -156,6 +165,7 @@ public final class JsonValueParser implements Closeable {
         public JsonValueParser build(final InputStream jsonStream) throws IOException {
             return new JsonValueParser(
                     buildJacksonParser(jsonStream),
+                    this.onlyJsonObjects,
                     this.depthToFlattenJsonArrays,
                     this.hasLiteralsWithNumbers,
                     this.hasFallbacksForUnparsableNumbers,
@@ -195,6 +205,7 @@ public final class JsonValueParser implements Closeable {
         private final JsonFactory factory;
 
         private JsonPointer root;
+        private boolean onlyJsonObjects;
         private int depthToFlattenJsonArrays;
         private boolean hasLiteralsWithNumbers;
         private boolean hasFallbacksForUnparsableNumbers;
@@ -240,9 +251,14 @@ public final class JsonValueParser implements Closeable {
      * @return the JSON value, or {@code null} if the parser reaches at the end of input in the beginning
      * @throws IOException  if failing to read JSON
      * @throws JsonParseException  if failing to parse JSON
+     * @throws InvalidJsonValueException  if the JSON value is not a JSON object while it is configured to accept only JSON objects
      */
     public JsonValue readJsonValue() throws IOException {
-        return this.valueReader.read(this.jacksonParser);
+        final JsonValue value = this.valueReader.read(this.jacksonParser);
+        if (this.onlyJsonObjects && !value.isJsonObject()) {
+            throw new InvalidJsonValueException("Expected JSON Object, but " + value.getEntityType().toString());
+        }
+        return value;
     }
 
     /**
@@ -251,6 +267,7 @@ public final class JsonValueParser implements Closeable {
      * @return an array of the captured JSON values, or {@code null} if the parser reaches at the end of input in the beginning
      * @throws IOException  if failing to read JSON
      * @throws JsonParseException  if failing to parse JSON
+     * @throws InvalidJsonValueException  if the JSON value is not a JSON object while it is configured to accept only JSON objects
      */
     public JsonValue[] captureJsonValues(final CapturingPointers capturingPointers) throws IOException {
         return capturingPointers.captureFromParser(this.jacksonParser, this.valueReader);
@@ -269,6 +286,7 @@ public final class JsonValueParser implements Closeable {
     private final com.fasterxml.jackson.core.JsonParser jacksonParser;
     private final InternalJsonValueReader valueReader;
 
+    private final boolean onlyJsonObjects;
     private final int depthToFlattenJsonArrays;
     private final boolean hasLiteralsWithNumbers;
     private final boolean hasFallbacksForUnparsableNumbers;

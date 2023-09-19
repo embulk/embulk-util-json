@@ -56,6 +56,7 @@ class TreeBasedCapturer {
         this.builderStack = new ArrayDeque<>();
 
         this.hasFinished = false;
+        this.firstToken = null;
 
         this.values = new JsonValue[size];
         for (int i = 0; i < this.values.length; i++) {
@@ -98,7 +99,9 @@ class TreeBasedCapturer {
 
         // Deepen the pointer stack when the token is a scalar value, START_ARRAY, or START_OBJECT.
         if (token.isScalarValue() || token.isStructStart()) {
-            if (!this.parsingStack.isEmpty()) {
+            if (this.parsingStack.isEmpty()) {
+                this.firstToken = token;
+            } else {
                 final ParsingContext context = this.parsingStack.getFirst();
                 if (context.isObject()) {
                     final String propertyName = context.getPropertyName();
@@ -250,6 +253,10 @@ class TreeBasedCapturer {
 
     JsonValue[] peekValues() {
         return this.values;
+    }
+
+    JsonToken firstToken() {
+        return this.firstToken;
     }
 
     private double getDoubleValue() throws IOException {
@@ -452,4 +459,5 @@ class TreeBasedCapturer {
     private final JsonValue[] values;
 
     private boolean hasFinished;
+    private JsonToken firstToken;
 }

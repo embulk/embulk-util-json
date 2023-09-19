@@ -32,6 +32,9 @@ class CapturingPointerToRoot extends CapturingPointers {
         if (value == null) {
             return null;
         }
+        if (valueReader.isOnlyJsonObjects() && !value.isJsonObject()) {
+            throw new InvalidJsonValueException("Expected JSON Object, but " + value.getEntityType().toString());
+        }
 
         final JsonValue[] values = new JsonValue[1];
         values[0] = value;

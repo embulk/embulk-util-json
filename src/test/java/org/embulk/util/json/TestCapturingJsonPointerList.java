@@ -40,7 +40,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
@@ -74,7 +74,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
@@ -106,7 +106,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
@@ -140,7 +140,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/"),
@@ -172,7 +172,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
@@ -198,7 +198,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
@@ -222,7 +222,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
@@ -248,7 +248,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":123,\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/baz"),
@@ -272,7 +272,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "[{\"foo\":12,\"bar\":true},{\"bar\":false,\"foo\":84},{\"foo\":123,\"bar\":false}]");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         assertEquals(JsonToken.START_ARRAY, parser.nextToken());
 
@@ -315,7 +315,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"bar\":true,\"foo\":12}{\"foo\":84,\"bar\":false}{\"foo\":123,\"bar\":false}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers = capturingPointers(
                 JsonPointer.compile("/foo"),
@@ -354,7 +354,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "[12,\"foo\",null,true]");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         assertEquals(JsonToken.START_ARRAY, parser.nextToken());
 
@@ -396,7 +396,7 @@ public class TestCapturingJsonPointerList {
                 JsonPointer.compile("/"),
                 JsonPointer.compile("/bar"),
                 JsonPointer.compile("/none"));
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser1 = factory.createParser("{\"foo\":12,\"bar\":true}");
@@ -437,7 +437,7 @@ public class TestCapturingJsonPointerList {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}{\"dummy\":{\"in\":98}}{\"unreach\":7}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingJsonPointerList capturingPointers1 = capturingPointers(
                 JsonPointer.compile("/qux"),

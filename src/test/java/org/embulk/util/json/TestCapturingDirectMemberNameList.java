@@ -33,11 +33,11 @@ import org.junit.jupiter.api.Test;
 
 public class TestCapturingDirectMemberNameList {
     @Test
-    public void testRead1() throws Exception {
+    public void testOrdinaryRead() throws Exception {
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(
                 "{\"foo\":{\"ignored\":[1,2,{},\"skipped\"]},\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
-        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, 0.0, 0L);
+        final InternalJsonValueReader reader = new InternalJsonValueReader(false, false, false, 0.0, 0L);
 
         final CapturingDirectMemberNameList capturingMembers1 = capturingMembers(
                 "bar",

@@ -32,14 +32,20 @@ import org.embulk.spi.json.JsonValue;
 
 final class InternalJsonValueReader {
     InternalJsonValueReader(
+            final boolean isOnlyJsonObjects,
             final boolean hasLiteralsWithNumbers,
             final boolean hasFallbacksForUnparsableNumbers,
             final double defaultDouble,
             final long defaultLong) {
+        this.isOnlyJsonObjects = isOnlyJsonObjects;
         this.hasLiteralsWithNumbers = hasLiteralsWithNumbers;
         this.hasFallbacksForUnparsableNumbers = hasFallbacksForUnparsableNumbers;
         this.defaultDouble = defaultDouble;
         this.defaultLong = defaultLong;
+    }
+
+    boolean isOnlyJsonObjects() {
+        return this.isOnlyJsonObjects;
     }
 
     boolean hasLiteralsWithNumbers() {
@@ -203,7 +209,7 @@ final class InternalJsonValueReader {
         }
     }
 
-    private void skipJsonValue(final JsonParser jacksonParser, final JsonToken token) throws IOException {
+    void skipJsonValue(final JsonParser jacksonParser, final JsonToken token) throws IOException {
         switch (token) {
             case VALUE_NULL:
             case VALUE_TRUE:
@@ -295,6 +301,7 @@ final class InternalJsonValueReader {
         }
     }
 
+    private final boolean isOnlyJsonObjects;
     private final boolean hasLiteralsWithNumbers;
     private final boolean hasFallbacksForUnparsableNumbers;
     private final double defaultDouble;

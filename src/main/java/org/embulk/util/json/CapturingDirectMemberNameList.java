@@ -47,14 +47,9 @@ class CapturingDirectMemberNameList extends CapturingPointers {
     JsonValue[] captureFromParser(
             final JsonParser jacksonParser,
             final InternalJsonValueReader valueReader) throws IOException {
+        final JsonToken firstToken;
         try {
-            final JsonToken firstToken = jacksonParser.nextToken();
-            if (firstToken == null) {
-                return null;
-            }
-            if (firstToken != JsonToken.START_OBJECT) {
-                throw new JsonParseException("Failed to parse JSON: Expected JSON Object, but " + firstToken.toString());
-            }
+            firstToken = jacksonParser.nextToken();
         } catch (final com.fasterxml.jackson.core.JsonParseException ex) {
             throw new JsonParseException("Failed to parse JSON", ex);
         } catch (final IOException ex) {
@@ -63,6 +58,15 @@ class CapturingDirectMemberNameList extends CapturingPointers {
             throw ex;
         } catch (final RuntimeException ex) {
             throw new JsonParseException("Failed to parse JSON", ex);
+        }
+
+        if (firstToken == null) {
+            return null;
+        }
+        // The value must be always a JSON object regardless of |onlyJsonObjects| when capturing by direct member names.
+        if (firstToken != JsonToken.START_OBJECT) {
+            valueReader.skipJsonValue(jacksonParser, firstToken);
+            throw new InvalidJsonValueException("Expected JSON Object, but " + firstToken.toString());
         }
 
         final JsonValue[] values = new JsonValue[this.size];
