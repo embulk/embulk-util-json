@@ -135,6 +135,27 @@ public class TestJsonValueParser {
     }
 
     @Test
+    public void testFlattenJsonArray() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder()
+                .setDepthToFlattenJsonArrays(1)
+                .build("[{\"a\": {\"b\": 1}},{\"a\": {\"b\": 2}}]");
+        assertEquals(JsonObject.of("a", JsonObject.of("b", JsonLong.of(1))), parser.readJsonValue());
+        assertEquals(JsonObject.of("a", JsonObject.of("b", JsonLong.of(2))), parser.readJsonValue());
+        assertNull(parser.readJsonValue());
+    }
+
+    @Test
+    public void testRootWithFlattenJsonArray() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder()
+                .root("/f")
+                .setDepthToFlattenJsonArrays(1)
+                .build("{\"f\":[{\"a\": {\"b\": 1}},{\"a\": {\"b\": 2}}]}");
+        assertEquals(JsonObject.of("a", JsonObject.of("b", JsonLong.of(1))), parser.readJsonValue());
+        assertEquals(JsonObject.of("a", JsonObject.of("b", JsonLong.of(2))), parser.readJsonValue());
+        assertNull(parser.readJsonValue());
+    }
+
+    @Test
     public void testCaptureJsonPointers() throws Exception {
         final JsonValueParser parser = JsonValueParser.builder().build(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
@@ -202,9 +223,29 @@ public class TestJsonValueParser {
     }
 
     @Test
-    public void testCaptureRoot() throws Exception {
+    public void testCaptureRootPointer() throws Exception {
         final JsonValueParser parser = JsonValueParser.builder().build(
                 "{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}");
+        final CapturingPointers pointers = CapturingPointers.builder().build();  // No pointers -- root.
+        final JsonValue[] values = parser.captureJsonValues(pointers);
+        assertEquals(1, values.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                values[0]);
+
+        // Confirming that JsonValueParser reaches at the end as expected.
+
+        assertNull(parser.captureJsonValues(pointers));
+    }
+
+    @Test
+    public void testCaptureWithRoot() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder().root("/ex").build(
+                "{\"ex\":{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}}}");
         final CapturingPointers pointers = CapturingPointers.builder().build();
         final JsonValue[] values = parser.captureJsonValues(pointers);
         assertEquals(1, values.length);
@@ -215,6 +256,37 @@ public class TestJsonValueParser {
                         "baz", JsonNull.NULL,
                         "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
                 values[0]);
+
+        // Confirming that JsonValueParser reaches at the end as expected.
+
+        assertNull(parser.captureJsonValues(pointers));
+    }
+
+    @Test
+    public void testCaptureWithFlattenJsonArray() throws Exception {
+        final JsonValueParser parser = JsonValueParser.builder().setDepthToFlattenJsonArrays(1).build(
+                "[{\"foo\":12,\"bar\":[true,false],\"baz\":null,\"qux\":{\"hoge\":\"fuga\"}},{\"foo\":14,\"bar\":[false],\"baz\":null,\"qux\":{}}]");
+        final CapturingPointers pointers = CapturingPointers.builder().build();
+
+        final JsonValue[] values1 = parser.captureJsonValues(pointers);
+        assertEquals(1, values1.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(12L),
+                        "bar", JsonArray.of(JsonBoolean.TRUE, JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of("hoge", JsonString.of("fuga"))),
+                values1[0]);
+
+        final JsonValue[] values2 = parser.captureJsonValues(pointers);
+        assertEquals(1, values2.length);
+        assertEquals(
+                JsonObject.of(
+                        "foo", JsonLong.of(14L),
+                        "bar", JsonArray.of(JsonBoolean.FALSE),
+                        "baz", JsonNull.NULL,
+                        "qux", JsonObject.of()),
+                values2[0]);
 
         // Confirming that JsonValueParser reaches at the end as expected.
 

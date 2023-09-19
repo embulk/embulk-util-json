@@ -34,6 +34,7 @@ import org.embulk.spi.json.JsonValue;
 public final class JsonValueParser implements Closeable {
     private JsonValueParser(
             final com.fasterxml.jackson.core.JsonParser jacksonParser,
+            final int depthToFlattenJsonArrays,
             final boolean hasLiteralsWithNumbers,
             final boolean hasFallbacksForUnparsableNumbers,
             final double defaultDouble,
@@ -41,6 +42,7 @@ public final class JsonValueParser implements Closeable {
         this.jacksonParser = Objects.requireNonNull(jacksonParser);
         this.valueReader = new InternalJsonValueReader(
                 hasLiteralsWithNumbers, hasFallbacksForUnparsableNumbers, defaultDouble, defaultLong);
+        this.depthToFlattenJsonArrays = depthToFlattenJsonArrays;
         this.hasLiteralsWithNumbers = hasLiteralsWithNumbers;
         this.hasFallbacksForUnparsableNumbers = hasFallbacksForUnparsableNumbers;
         this.defaultDouble = defaultDouble;
@@ -54,6 +56,7 @@ public final class JsonValueParser implements Closeable {
         Builder(final JsonFactory factory) {
             this.factory = Objects.requireNonNull(factory);
             this.root = null;
+            this.depthToFlattenJsonArrays = 0;
             this.hasLiteralsWithNumbers = false;
             this.hasFallbacksForUnparsableNumbers = false;
             this.defaultDouble = 0.0;
@@ -81,6 +84,17 @@ public final class JsonValueParser implements Closeable {
          */
         public Builder root(final String root) {
             this.root = JsonPointer.compile(root);
+            return this;
+        }
+
+        /**
+         * Sets the depth to flatten JSON Arrays to parse.
+         *
+         * @param depthToFlattenJsonArrays  the depth to flatten JSON Arrays
+         * @return this builder
+         */
+        public Builder setDepthToFlattenJsonArrays(final int depthToFlattenJsonArrays) {
+            this.depthToFlattenJsonArrays = depthToFlattenJsonArrays;
             return this;
         }
 
@@ -126,6 +140,7 @@ public final class JsonValueParser implements Closeable {
         public JsonValueParser build(final String json) throws IOException {
             return new JsonValueParser(
                     buildJacksonParser(json),
+                    this.depthToFlattenJsonArrays,
                     this.hasLiteralsWithNumbers,
                     this.hasFallbacksForUnparsableNumbers,
                     this.defaultDouble,
@@ -141,6 +156,7 @@ public final class JsonValueParser implements Closeable {
         public JsonValueParser build(final InputStream jsonStream) throws IOException {
             return new JsonValueParser(
                     buildJacksonParser(jsonStream),
+                    this.depthToFlattenJsonArrays,
                     this.hasLiteralsWithNumbers,
                     this.hasFallbacksForUnparsableNumbers,
                     this.defaultDouble,
@@ -156,20 +172,30 @@ public final class JsonValueParser implements Closeable {
         }
 
         private com.fasterxml.jackson.core.JsonParser extendJacksonParser(final com.fasterxml.jackson.core.JsonParser baseParser) {
-            if (this.root == null) {
-                return baseParser;
-            }
-            return new FilteringParserDelegate(
-                    baseParser,
+            com.fasterxml.jackson.core.JsonParser parser = baseParser;
+            if (this.root != null) {
+                parser = new FilteringParserDelegate(
+                    parser,
                     new JsonPointerBasedFilter(this.root),
                     false,  // TODO: Use com.fasterxml.jackson.core.filter.TokenFilter.Inclusion since Jackson 2.12.
                     true  // Allow multiple matches
                     );
+            }
+            if (this.depthToFlattenJsonArrays > 0) {
+                parser = new FilteringParserDelegate(
+                    parser,
+                    new FlattenJsonArrayFilter(this.depthToFlattenJsonArrays),
+                    false,  // TODO: Use com.fasterxml.jackson.core.filter.TokenFilter.Inclusion since Jackson 2.12.
+                    true  // Allow multiple matches
+                    );
+            }
+            return parser;
         }
 
         private final JsonFactory factory;
 
         private JsonPointer root;
+        private int depthToFlattenJsonArrays;
         private boolean hasLiteralsWithNumbers;
         private boolean hasFallbacksForUnparsableNumbers;
         private double defaultDouble;
@@ -243,6 +269,7 @@ public final class JsonValueParser implements Closeable {
     private final com.fasterxml.jackson.core.JsonParser jacksonParser;
     private final InternalJsonValueReader valueReader;
 
+    private final int depthToFlattenJsonArrays;
     private final boolean hasLiteralsWithNumbers;
     private final boolean hasFallbacksForUnparsableNumbers;
     private final double defaultDouble;
