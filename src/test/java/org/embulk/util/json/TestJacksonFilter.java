@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 public class TestJacksonFilter {
     @Test
     public void testFilterSequenceSkippingNonMatch() throws IOException {
+        // This |parser| returns only {"bar":"baz"} and {"bar":"qux"}, with just skipping {"xxx":{"yyy":"zzz"}}.
         final com.fasterxml.jackson.core.JsonParser parser = createFilteredParser(
                 "{\"foo\":{\"bar\":\"baz\"}}{\"xxx\":{\"yyy\":\"zzz\"}}{\"foo\":{\"bar\":\"quux\"}}",
                 JsonPointer.compile("/foo"));
