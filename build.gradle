@@ -13,7 +13,7 @@ ext {
 }
 
 group = "org.embulk"
-version = "0.3.0-SNAPSHOT"
+version = "0.3.0"
 description = "Embulk JSON processor for Embulk plugins"
 
 configurations {
