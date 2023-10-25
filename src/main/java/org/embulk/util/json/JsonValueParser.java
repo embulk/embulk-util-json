@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.filter.FilteringParserDelegate;
 import com.fasterxml.jackson.core.filter.JsonPointerBasedFilter;
 import com.fasterxml.jackson.core.filter.TokenFilter;
+import com.fasterxml.jackson.core.json.PackageVersion;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -232,6 +233,7 @@ public final class JsonValueParser implements Closeable {
      * @return the new builder
      */
     public static Builder builder(final JsonFactory jsonFactory) {
+        assertJacksonVersion();
         return new Builder(jsonFactory);
     }
 
@@ -265,6 +267,17 @@ public final class JsonValueParser implements Closeable {
     @Override
     public final void close() throws IOException {
         this.jacksonParser.close();
+    }
+
+    private static void assertJacksonVersion() {
+        if (PackageVersion.VERSION.getMajorVersion() != 2) {
+            throw new UnsupportedOperationException("embulk-util-json is not used with Jackson 2.");
+        }
+
+        final int minor = PackageVersion.VERSION.getMinorVersion();
+        if (minor < 14 || (minor == 15 && PackageVersion.VERSION.getPatchLevel() <= 2)) {
+            throw new UnsupportedOperationException("embulk-util-json is not used with Jackson 2.15.3 or later.");
+        }
     }
 
     private final com.fasterxml.jackson.core.JsonParser jacksonParser;
