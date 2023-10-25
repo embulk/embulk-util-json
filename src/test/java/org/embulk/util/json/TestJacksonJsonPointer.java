@@ -32,11 +32,7 @@ public class TestJacksonJsonPointer {
     public void testEmpty() throws IOException {
         final JsonPointer empty = JsonPointer.compile("");
         assertEquals("", empty.toString());
-        if (isBefore2_14_0()) {
-            assertEquals("", empty.getMatchingProperty());
-        } else {
-            assertEquals(null, empty.getMatchingProperty());
-        }
+        assertEquals(null, empty.getMatchingProperty());
         assertTrue(empty.getMatchingIndex() < 0);
         assertEquals(JsonPointer.compile(""), empty);
         assertNotEquals(JsonPointer.compile("/"), empty);
@@ -57,11 +53,7 @@ public class TestJacksonJsonPointer {
 
         final JsonPointer tail = root.tail();
         assertEquals("", tail.toString());
-        if (isBefore2_14_0()) {
-            assertEquals("", tail.getMatchingProperty());
-        } else {
-            assertEquals(null, tail.getMatchingProperty());
-        }
+        assertEquals(null, tail.getMatchingProperty());
         assertTrue(tail.getMatchingIndex() < 0);
         assertEquals(JsonPointer.compile(""), tail);
         assertNotEquals(JsonPointer.compile("/"), tail);
@@ -91,11 +83,7 @@ public class TestJacksonJsonPointer {
 
         final JsonPointer tail2 = tail1.tail();
         assertEquals("", tail2.toString());
-        if (isBefore2_14_0()) {
-            assertEquals("", tail2.getMatchingProperty());
-        } else {
-            assertEquals(null, tail2.getMatchingProperty());
-        }
+        assertEquals(null, tail2.getMatchingProperty());
         assertTrue(tail2.getMatchingIndex() < 0);
         assertEquals(JsonPointer.compile(""), tail2);
         assertNotEquals(JsonPointer.compile("/"), tail2);
@@ -116,11 +104,7 @@ public class TestJacksonJsonPointer {
 
         final JsonPointer tail = root.tail();
         assertEquals("", tail.toString());
-        if (isBefore2_14_0()) {
-            assertEquals("", tail.getMatchingProperty());
-        } else {
-            assertEquals(null, tail.getMatchingProperty());
-        }
+        assertEquals(null, tail.getMatchingProperty());
         assertTrue(tail.getMatchingIndex() < 0);
         assertEquals(JsonPointer.compile(""), tail);
         assertNotEquals(JsonPointer.compile("/"), tail);
@@ -141,11 +125,7 @@ public class TestJacksonJsonPointer {
 
         final JsonPointer tail = root.tail();
         assertEquals("", tail.toString());
-        if (isBefore2_14_0()) {
-            assertEquals("", tail.getMatchingProperty());
-        } else {
-            assertEquals(null, tail.getMatchingProperty());
-        }
+        assertEquals(null, tail.getMatchingProperty());
         assertTrue(tail.getMatchingIndex() < 0);
         assertEquals(JsonPointer.compile(""), tail);
         assertNotEquals(JsonPointer.compile("/"), tail);
@@ -185,11 +165,7 @@ public class TestJacksonJsonPointer {
 
         final JsonPointer tail3 = tail2.tail();
         assertEquals("", tail3.toString());
-        if (isBefore2_14_0()) {
-            assertEquals("", tail3.getMatchingProperty());
-        } else {
-            assertEquals(null, tail3.getMatchingProperty());
-        }
+        assertEquals(null, tail3.getMatchingProperty());
         assertTrue(tail3.getMatchingIndex() < 0);
         assertEquals(JsonPointer.compile(""), tail3);
         assertNotEquals(JsonPointer.compile("/"), tail3);
@@ -202,13 +178,5 @@ public class TestJacksonJsonPointer {
     @BeforeAll
     static void printJacksonVersion() {
         System.out.println("Tested with Jackson: " + PackageVersion.VERSION.toString());
-    }
-
-    // The behavior of JsonPointer.compile("").tail() is different from Jackson 2.14.0.
-    //
-    // https://github.com/FasterXML/jackson-core/issues/788
-    // https://github.com/FasterXML/jackson-core/commit/b0f6eb9bb2d2d829efb19020e7df4d732066f8cd
-    private static boolean isBefore2_14_0() {
-        return PackageVersion.VERSION.getMajorVersion() <= 2 && PackageVersion.VERSION.getMinorVersion() <= 13;
     }
 }

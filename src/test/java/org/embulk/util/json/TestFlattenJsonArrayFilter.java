@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.filter.FilteringParserDelegate;
+import com.fasterxml.jackson.core.filter.TokenFilter;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
@@ -105,7 +106,7 @@ public class TestFlattenJsonArrayFilter {
         return new FilteringParserDelegate(
                 factory.createParser(json),
                 new FlattenJsonArrayFilter(depth),
-                false,  // TODO: Use com.fasterxml.jackson.core.filter.TokenFilter.Inclusion since Jackson 2.12.
+                TokenFilter.Inclusion.ONLY_INCLUDE_ALL,
                 true  // Allow multiple matches
                 );
     }

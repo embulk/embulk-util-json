@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.filter.FilteringParserDelegate;
 import com.fasterxml.jackson.core.filter.JsonPointerBasedFilter;
+import com.fasterxml.jackson.core.filter.TokenFilter;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -177,7 +178,7 @@ public final class JsonValueParser implements Closeable {
                 parser = new FilteringParserDelegate(
                     parser,
                     new JsonPointerBasedFilter(this.root),
-                    false,  // TODO: Use com.fasterxml.jackson.core.filter.TokenFilter.Inclusion since Jackson 2.12.
+                    TokenFilter.Inclusion.ONLY_INCLUDE_ALL,
                     true  // Allow multiple matches
                     );
             }
@@ -185,7 +186,7 @@ public final class JsonValueParser implements Closeable {
                 parser = new FilteringParserDelegate(
                     parser,
                     new FlattenJsonArrayFilter(this.depthToFlattenJsonArrays),
-                    false,  // TODO: Use com.fasterxml.jackson.core.filter.TokenFilter.Inclusion since Jackson 2.12.
+                    TokenFilter.Inclusion.ONLY_INCLUDE_ALL,
                     true  // Allow multiple matches
                     );
             }
