@@ -8,7 +8,7 @@ plugins {
 
 ext {
     if (!project.hasProperty("jacksonVersionForJacksonTest")) {
-        jacksonVersionForJacksonTest = "2.6.7"
+        jacksonVersionForJacksonTest = "2.15.3"
     }
 }
 
@@ -44,7 +44,7 @@ dependencies {
     compileOnly "org.msgpack:msgpack-core:0.8.24"
 
     // Dependencies should be "api" so that their scope would be "compile" in "pom.xml".
-    api platform("com.fasterxml.jackson:jackson-bom:2.6.7")
+    api platform("com.fasterxml.jackson:jackson-bom:2.15.3")
     api "com.fasterxml.jackson.core:jackson-core"
 
     testImplementation "org.embulk:embulk-spi:0.11"
@@ -68,7 +68,7 @@ javadoc {
         overview = "src/main/html/overview.html"
         links "https://docs.oracle.com/javase/8/docs/api/"
         links "https://dev.embulk.org/embulk-spi/0.11/javadoc/"
-        links "https://www.javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/2.6.7/"
+        links "https://www.javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/2.15.3/"
         links "https://javadoc.io/doc/org.msgpack/msgpack-core/0.8.24/"
     }
 }
