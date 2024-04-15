@@ -6,12 +6,6 @@ plugins {
     id "checkstyle"
 }
 
-ext {
-    if (!project.hasProperty("jacksonVersionForJacksonTest")) {
-        jacksonVersionForJacksonTest = "2.15.3"
-    }
-}
-
 group = "org.embulk"
 version = "0.5.0-SNAPSHOT"
 description = "Embulk JSON processor for Embulk plugins"
