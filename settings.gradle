@@ -1,1 +1,13 @@
 rootProject.name = "embulk-util-json"
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        testLibs {
+            def jacksonVersion = version("jackson", providers.gradleProperty("jacksonVersionForJacksonTest").getOrElse("2.15.3"))
+
+            library("jackson-bom", "com.fasterxml.jackson", "jackson-bom").versionRef(jacksonVersion)
+
+            library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").withoutVersion()
+        }
+    }
+}
