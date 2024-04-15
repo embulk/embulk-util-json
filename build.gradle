@@ -6,6 +6,10 @@ plugins {
     id "checkstyle"
 }
 
+repositories {
+    mavenCentral()
+}
+
 group = "org.embulk"
 version = "0.5.0-SNAPSHOT"
 description = "Embulk JSON processor for Embulk plugins"
@@ -13,10 +17,6 @@ description = "Embulk JSON processor for Embulk plugins"
 configurations {
     compileClasspath.resolutionStrategy.activateDependencyLocking()
     runtimeClasspath.resolutionStrategy.activateDependencyLocking()
-}
-
-repositories {
-    mavenCentral()
 }
 
 tasks.withType(JavaCompile) {
