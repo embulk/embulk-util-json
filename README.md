@@ -1,5 +1,5 @@
-Embulk Utilities for JSON
-==========================
+Embulk JSON processor for Embulk plugins
+=========================================
 
 For Embulk plugin developers
 -----------------------------
