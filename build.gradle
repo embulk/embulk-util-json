@@ -6,10 +6,8 @@ plugins {
     id "checkstyle"
 }
 
-ext {
-    if (!project.hasProperty("jacksonVersionForJacksonTest")) {
-        jacksonVersionForJacksonTest = "2.15.3"
-    }
+repositories {
+    mavenCentral()
 }
 
 group = "org.embulk"
@@ -19,10 +17,6 @@ description = "Embulk JSON processor for Embulk plugins"
 configurations {
     compileClasspath.resolutionStrategy.activateDependencyLocking()
     runtimeClasspath.resolutionStrategy.activateDependencyLocking()
-}
-
-repositories {
-    mavenCentral()
 }
 
 tasks.withType(JavaCompile) {
@@ -40,23 +34,22 @@ java {
 }
 
 dependencies {
-    compileOnly "org.embulk:embulk-spi:0.11"
-    compileOnly "org.msgpack:msgpack-core:0.8.24"
+    compileOnly libs.embulk.spi
+    compileOnly libs.msgpack
 
     // Dependencies should be "api" so that their scope would be "compile" in "pom.xml".
-    api platform("com.fasterxml.jackson:jackson-bom:2.15.3")
-    api "com.fasterxml.jackson.core:jackson-core"
+    api platform(libs.jackson.bom)
+    api libs.jackson.core
 
-    testImplementation "org.embulk:embulk-spi:0.11"
-    testImplementation "org.msgpack:msgpack-core:0.8.24"
+    testImplementation libs.embulk.spi
+    testImplementation libs.msgpack
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.3"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.9.3"
+    testImplementation platform(libs.junit5.bom)
+    testImplementation libs.bundles.junit5.implementation
+    testRuntimeOnly libs.bundles.junit5.runtime
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.3"
-
-    testImplementation platform("com.fasterxml.jackson:jackson-bom:$jacksonVersionForJacksonTest")
-    testImplementation "com.fasterxml.jackson.core:jackson-core"
+    testImplementation platform(testLibs.jackson.bom)
+    testImplementation testLibs.jackson.core
 }
 
 javadoc {
@@ -67,9 +60,9 @@ javadoc {
         encoding = "UTF-8"
         overview = "src/main/html/overview.html"
         links "https://docs.oracle.com/javase/8/docs/api/"
-        links "https://dev.embulk.org/embulk-spi/0.11/javadoc/"
-        links "https://www.javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/2.15.3/"
-        links "https://javadoc.io/doc/org.msgpack/msgpack-core/0.8.24/"
+        links "https://dev.embulk.org/embulk-spi/${libs.versions.embulk.spi.get()}/javadoc/"
+        links "https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${libs.versions.jackson.get()}/"
+        links "https://javadoc.io/doc/org.msgpack/msgpack-core/${libs.versions.jackson.get()}/"
     }
 }
 
