@@ -129,7 +129,7 @@ public class TestJsonParser {
         final Value col3Value = map.get(key("col3"));
         assertTrue(col3Value.isArrayValue());
         assertEquals(
-                Arrays.asList(1,2,3),
+                Arrays.asList(1, 2, 3),
                 col3Value.asArrayValue().list().stream()
                         .map(v -> v.asIntegerValue().asInt())
                         .collect(Collectors.toList())

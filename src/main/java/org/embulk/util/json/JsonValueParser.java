@@ -177,19 +177,19 @@ public final class JsonValueParser implements Closeable {
             com.fasterxml.jackson.core.JsonParser parser = baseParser;
             if (this.root != null) {
                 parser = new FilteringParserDelegate(
-                    parser,
-                    new JsonPointerBasedFilter(this.root),
-                    TokenFilter.Inclusion.ONLY_INCLUDE_ALL,
-                    true  // Allow multiple matches
-                    );
+                        parser,
+                        new JsonPointerBasedFilter(this.root),
+                        TokenFilter.Inclusion.ONLY_INCLUDE_ALL,
+                        true  // Allow multiple matches
+                        );
             }
             if (this.depthToFlattenJsonArrays > 0) {
                 parser = new FilteringParserDelegate(
-                    parser,
-                    new FlattenJsonArrayFilter(this.depthToFlattenJsonArrays),
-                    TokenFilter.Inclusion.ONLY_INCLUDE_ALL,
-                    true  // Allow multiple matches
-                    );
+                        parser,
+                        new FlattenJsonArrayFilter(this.depthToFlattenJsonArrays),
+                        TokenFilter.Inclusion.ONLY_INCLUDE_ALL,
+                        true  // Allow multiple matches
+                        );
             }
             return parser;
         }

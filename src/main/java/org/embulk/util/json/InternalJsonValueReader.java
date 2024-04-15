@@ -122,8 +122,7 @@ final class InternalJsonValueReader {
             case VALUE_STRING:
                 return JsonString.of(jacksonParser.getText());
 
-            case START_ARRAY:
-            {
+            case START_ARRAY: {
                 final List<JsonValue> list = new ArrayList<>();
                 while (true) {
                     final JsonToken nextToken = jacksonParser.nextToken();
@@ -141,8 +140,7 @@ final class InternalJsonValueReader {
             }
             // Never fall through from the previous branch of START_ARRAY.
 
-            case START_OBJECT:
-            {
+            case START_OBJECT: {
                 final List<String> keys = new ArrayList<>();
                 final List<JsonValue> values = new ArrayList<>();
 
