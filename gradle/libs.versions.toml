@@ -18,6 +18,8 @@ bval-jsr303 = "0.5"
 logback = "1.3.6"
 joda-time = "2.9.2"
 
+checkstyle = "9.3"
+
 [libraries]
 embulk-spi = { group = "org.embulk", name = "embulk-spi", version.ref = "embulk-spi" }
 msgpack = { group = "org.msgpack", name = "msgpack-core", version.ref = "msgpack" }
