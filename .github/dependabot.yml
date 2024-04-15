@@ -5,3 +5,12 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "org.embulk:embulk-spi"
+      - dependency-name: "junit:junit"
+      - dependency-name: "org.junit*"
