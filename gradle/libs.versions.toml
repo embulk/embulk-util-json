@@ -12,7 +12,7 @@ msgpack = "0.8.24"
 # It is to align with the restriction of embulk-util-json: https://github.com/embulk/embulk-util-json/pull/37
 jackson = { require = "2.15.4", prefer = "2.16.2" }
 
-junit5 = "5.10.2"
+junit5 = "5.10.3"
 embulk-core = "0.11.1"
 bval-jsr303 = "0.5"
 logback = "1.3.6"
